@@ -27,6 +27,7 @@ export default function SideChatButton() {
     console.log(res);
   };
   const sendMessage = async () => {
+    // e.target.value=''
     if (inputValue.trim()) {
       const newMessage = {
         id: messages.length + 1,
@@ -35,10 +36,11 @@ export default function SideChatButton() {
         timestamp: new Date()
       };
       setMessages([...messages, newMessage]);
-
+      
       // Simulate bot response
       try {
         const algoName = inputValue.trim().toLowerCase().replace(/\s+/g, '-');
+        setInputValue('');
         console.log(algoName);
         await apiCall(algoName);
         
@@ -53,6 +55,7 @@ export default function SideChatButton() {
         navigate(`/algorithms/${algoName}`)
       }
       catch (e) {
+        setInputValue('');
         const errorMessage = {
           text: `Failed to create ${inputValue} page.`,
           sender: "bot",
@@ -61,7 +64,6 @@ export default function SideChatButton() {
         setMessages(prevMessages => [...prevMessages, errorMessage]);
       }
     }
-    setInputValue('');
   };
 
   const handleKeyPress = (e) => {

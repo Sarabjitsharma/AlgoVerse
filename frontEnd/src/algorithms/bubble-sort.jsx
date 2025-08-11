@@ -1,21 +1,12 @@
-from langchain_core.prompts import PromptTemplate
-
-# Store your Binary Search JSX example exactly as it is
-binary_search_code = """
-// ===== Binary Search Component =====
-// Paste your entire JSX code here exactly as in your working example
-// No need to escape curly braces or modify anything
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Play, Pause, StepForward, StepBack, RotateCcw } from 'lucide-react';
 
-const BinarySearch = () => {
-  const [array, setArray] = useState([2, 4, 6, 8, 10, 12, 14, 16, 18, 20]);
-  const [target, setTarget] = useState('12');
-  const [low, setLow] = useState(-1);
-  const [high, setHigh] = useState(-1);
-  const [mid, setMid] = useState(-1);
-  const [foundIndex, setFoundIndex] = useState(-1);
+const BubbleSort = () => {
+  const [array, setArray] = useState([64, 34, 25, 12, 22, 11, 90]);
+  const [originalArray, setOriginalArray] = useState([64, 34, 25, 12, 22, 11, 90]);
+  const [comparing, setComparing] = useState([]);
+  const [swapping, setSwapping] = useState([]);
+  const [sortedIndices, setSortedIndices] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1500);
   const [stepIndex, setStepIndex] = useState(0);
@@ -23,10 +14,11 @@ const BinarySearch = () => {
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [error, setError] = useState('');
-  const [explanation, setExplanation] = useState('Enter sorted array and target value to begin');
+  const [explanation, setExplanation] = useState('Enter comma-separated numbers and click Start to begin bubble sort');
   const [steps, setSteps] = useState([]);
   const [showExplanations, setShowExplanations] = useState([]);
-  const [isSorted, setIsSorted] = useState(true);
+  const [passCount, setPassCount] = useState(0);
+  const [comparisonCount, setComparisonCount] = useState(0);
 
   const synthRef = useRef(null);
   const utteranceRef = useRef(null);
@@ -66,10 +58,12 @@ const BinarySearch = () => {
   useEffect(() => {
     if (steps.length > 0 && stepIndex < steps.length) {
       const step = steps[stepIndex];
-      setLow(step.low);
-      setHigh(step.high);
-      setMid(step.mid);
-      setFoundIndex(step.foundIndex);
+      setArray(step.array);
+      setComparing(step.comparing);
+      setSwapping(step.swapping);
+      setSortedIndices(step.sortedIndices);
+      setPassCount(step.passCount);
+      setComparisonCount(step.comparisonCount);
       setExplanation(step.explanation);
       setShowExplanations(prev => [...prev, stepIndex]);
 
@@ -87,100 +81,97 @@ const BinarySearch = () => {
 
   const validateInput = () => {
     setError('');
-    if (!target.trim()) {
-      setError('Please enter a target value');
-      return false;
-    }
-    const numTarget = Number(target);
-    if (isNaN(numTarget)) {
-      setError('Target must be a number');
-      return false;
-    }
-    if (array.length === 0) {
+    if (!array.length) {
       setError('Array cannot be empty');
       return false;
     }
-    for (let i = 1; i < array.length; i++) {
-      if (array[i] < array[i - 1]) {
-        setIsSorted(false);
-        setError('Array must be sorted in ascending order');
-        return false;
-      }
-    }
-    setIsSorted(true);
     return true;
   };
 
-  const startSearch = () => {
+  const startSort = () => {
     if (!validateInput()) return;
     
-    const numTarget = Number(target);
     const newSteps = [];
-    let currentLow = 0;
-    let currentHigh = array.length - 1;
-    let currentMid = -1;
-    let currentFoundIndex = -1;
+    const arr = [...originalArray];
+    const n = arr.length;
     let stepCounter = 0;
+    let comparisonCounter = 0;
 
     newSteps.push({
-      low: currentLow,
-      high: currentHigh,
-      mid: -1,
-      foundIndex: -1,
-      explanation: Starting binary search: low=${currentLow}, high=${currentHigh}, target=${numTarget}
+      array: [...arr],
+      comparing: [],
+      swapping: [],
+      sortedIndices: [],
+      passCount: 0,
+      comparisonCount: 0,
+      explanation: `Starting bubble sort with array: [${arr.join(', ')}]`
     });
 
-    while (currentLow <= currentHigh) {
-      currentMid = Math.floor((currentLow + currentHigh) / 2);
-      stepCounter++;
+    for (let i = 0; i < n; i++) {
+      let swapped = false;
       
       newSteps.push({
-        low: currentLow,
-        high: currentHigh,
-        mid: currentMid,
-        foundIndex: -1,
-        explanation: Step ${stepCounter}: Calculating mid = floor((${currentLow} + ${currentHigh}) / 2) = ${currentMid}
+        array: [...arr],
+        comparing: [],
+        swapping: [],
+        sortedIndices: [...sortedIndices.slice(0, i)],
+        passCount: i + 1,
+        comparisonCount: comparisonCounter,
+        explanation: `Pass ${i + 1}: Checking ${n - i} elements`
       });
 
-      if (array[currentMid] === numTarget) {
-        currentFoundIndex = currentMid;
+      for (let j = 0; j < n - i - 1; j++) {
+        stepCounter++;
+        comparisonCounter++;
+        
         newSteps.push({
-          low: currentLow,
-          high: currentHigh,
-          mid: currentMid,
-          foundIndex: currentMid,
-          explanation: Found target at index ${currentMid}! Value = ${array[currentMid]}
+          array: [...arr],
+          comparing: [j, j + 1],
+          swapping: [],
+          sortedIndices: [...sortedIndices.slice(0, i)],
+          passCount: i + 1,
+          comparisonCount: comparisonCounter,
+          explanation: `Comparing elements at positions ${j} and ${j + 1}: ${arr[j]} and ${arr[j + 1]}`
+        });
+
+        if (arr[j] > arr[j + 1]) {
+          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+          swapped = true;
+          
+          newSteps.push({
+            array: [...arr],
+            comparing: [j, j + 1],
+            swapping: [j, j + 1],
+            sortedIndices: [...sortedIndices.slice(0, i)],
+            passCount: i + 1,
+            comparisonCount: comparisonCounter,
+            explanation: `Swapping ${arr[j + 1]} and ${arr[j]} because ${arr[j + 1]} < ${arr[j]}`
+          });
+        }
+      }
+
+      newSteps.push({
+        array: [...arr],
+        comparing: [],
+        swapping: [],
+        sortedIndices: [...sortedIndices.slice(0, i), n - i - 1],
+        passCount: i + 1,
+        comparisonCount: comparisonCounter,
+        explanation: `Element ${arr[n - i - 1]} is now in its correct position at index ${n - i - 1}`
+      });
+
+      if (!swapped) {
+        newSteps.push({
+          array: [...arr],
+          comparing: [],
+          swapping: [],
+          sortedIndices: Array.from({length: n}, (_, k) => k),
+          passCount: i + 1,
+          comparisonCount: comparisonCounter,
+          explanation: `Array is sorted after ${i + 1} pass${i + 1 > 1 ? 'es' : ''} with ${comparisonCounter} comparison${comparisonCounter > 1 ? 's' : ''}`
         });
         break;
-      } else if (array[currentMid] < numTarget) {
-        newSteps.push({
-          low: currentLow,
-          high: currentHigh,
-          mid: currentMid,
-          foundIndex: -1,
-          explanation: ${array[currentMid]} < ${numTarget}, so set low = mid + 1 = ${currentMid + 1}
-        });
-        currentLow = currentMid + 1;
-      } else {
-        newSteps.push({
-          low: currentLow,
-          high: currentHigh,
-          mid: currentMid,
-          foundIndex: -1,
-          explanation: ${array[currentMid]} > ${numTarget}, so set high = mid - 1 = ${currentMid - 1}
-        });
-        currentHigh = currentMid - 1;
       }
-    }
-
-    if (currentFoundIndex === -1) {
-      newSteps.push({
-        low: -1,
-        high: -1,
-        mid: -1,
-        foundIndex: -1,
-        explanation: Target ${numTarget} not found in the array
-      });
     }
 
     setSteps(newSteps);
@@ -196,11 +187,7 @@ const BinarySearch = () => {
       return isNaN(num) ? 0 : num;
     });
     setArray(newArray);
-    setError('');
-  };
-
-  const handleTargetChange = (e) => {
-    setTarget(e.target.value);
+    setOriginalArray(newArray);
     setError('');
   };
 
@@ -210,7 +197,7 @@ const BinarySearch = () => {
 
   const togglePlay = () => {
     if (steps.length === 0) {
-      startSearch();
+      startSort();
     } else {
       setIsPlaying(!isPlaying);
     }
@@ -228,16 +215,18 @@ const BinarySearch = () => {
     }
   };
 
-  const resetSearch = () => {
+  const resetSort = () => {
     setIsPlaying(false);
     setStepIndex(0);
-    setLow(-1);
-    setHigh(-1);
-    setMid(-1);
-    setFoundIndex(-1);
+    setArray(originalArray);
+    setComparing([]);
+    setSwapping([]);
+    setSortedIndices([]);
     setSteps([]);
     setShowExplanations([]);
-    setExplanation('Enter sorted array and target value to begin');
+    setPassCount(0);
+    setComparisonCount(0);
+    setExplanation('Enter comma-separated numbers and click Start to begin bubble sort');
     if (synthRef.current && synthRef.current.speaking) {
       synthRef.current.cancel();
     }
@@ -257,19 +246,20 @@ const BinarySearch = () => {
   };
 
   const getElementClass = (index) => {
-    if (index === foundIndex) return 'bg-green-500 text-white transform scale-110';
-    if (index === mid) return 'bg-yellow-400 text-black';
-    if (index >= low && index <= high) return 'bg-blue-500 text-white';
+    if (sortedIndices.includes(index)) return 'bg-green-500 text-white';
+    if (swapping.includes(index)) return 'bg-orange-500 text-white transform scale-110';
+    if (comparing.includes(index)) return 'bg-yellow-400 text-black';
+    if (comparing.length === 0 && sortedIndices.length === 0) return 'bg-gray-200 text-black';
     return 'bg-gray-200 text-black';
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6 font-sans">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-blue-700 mb-4 animate-fade-in">Binary Search Algorithm</h1>
+        <h1 className="text-4xl font-bold text-blue-700 mb-4 animate-fade-in">Bubble Sort Algorithm</h1>
         <p className="text-lg text-gray-700 mb-6">
-          Binary search efficiently locates an item in a sorted array by repeatedly dividing the search interval in half.
-          Time complexity: O(log n)
+          Bubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they're in wrong order.
+          Time complexity: O(n²)
         </p>
       </div>
 
@@ -278,36 +268,20 @@ const BinarySearch = () => {
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Interactive Demo</h2>
           
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Sorted Array (comma separated):</label>
+            <label className="block text-gray-700 mb-2">Array (comma separated):</label>
             <input
               type="text"
               value={array.join(',')}
               onChange={handleArrayChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              aria-label="Enter sorted array values separated by commas"
-            />
-          </div>
-          
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Target Value:</label>
-            <input
-              type="text"
-              value={target}
-              onChange={handleTargetChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              aria-label="Enter target value to search"
+              aria-label="Enter array values separated by commas"
+              disabled={isPlaying}
             />
           </div>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-300">
               {error}
-            </div>
-          )}
-
-          {!isSorted && (
-            <div className="mb-4 p-3 bg-yellow-100 text-yellow-700 rounded-lg border border-yellow-300">
-              Warning: Array is not sorted. Binary search requires sorted arrays.
             </div>
           )}
 
@@ -323,7 +297,7 @@ const BinarySearch = () => {
             <button
               onClick={stepBackward}
               disabled={stepIndex === 0}
-              className={flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}`}
               aria-label="Previous step"
             >
               <StepBack size={20} /> Back
@@ -331,15 +305,15 @@ const BinarySearch = () => {
             <button
               onClick={stepForward}
               disabled={stepIndex >= steps.length - 1}
-              className={flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex >= steps.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex >= steps.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}`}
               aria-label="Next step"
             >
               <StepForward size={20} /> Next
             </button>
             <button
-              onClick={resetSearch}
+              onClick={resetSort}
               className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-              aria-label="Reset search"
+              aria-label="Reset sort"
             >
               <RotateCcw size={20} /> Reset
             </button>
@@ -402,21 +376,24 @@ const BinarySearch = () => {
             {array.map((value, index) => (
               <div 
                 key={index} 
-                className={flex flex-col items-center transition-all duration-500 ease-in-out ${getElementClass(index)}}
+                className={`flex flex-col items-center transition-all duration-500 ease-in-out ${getElementClass(index)}`}
                 style={{ 
                   width: '60px', 
-                  height: ${value * 10 + 40}px,
+                  height: `${value * 5 + 40}px`,
                   transition: 'background-color 0.5s, transform 0.5s'
                 }}
               >
                 <div className="font-bold mb-1">{value}</div>
                 <div className="text-xs mt-auto pb-1">
-                  {index === low && "LOW"}
-                  {index === high && "HIGH"}
-                  {index === mid && "MID"}
+                  {sortedIndices.includes(index) && "✓"}
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-between mb-4 text-sm text-gray-600">
+            <span>Pass: {passCount}</span>
+            <span>Comparisons: {comparisonCount}</span>
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
@@ -452,15 +429,15 @@ const BinarySearch = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded-lg border border-blue-200">
             <h3 className="font-bold text-lg text-blue-700 mb-2">How It Works</h3>
-            <p>Binary search works by repeatedly dividing the sorted array in half and narrowing down the search space based on comparisons with the middle element.</p>
+            <p>Bubble sort compares each pair of adjacent items and swaps them if they are in the wrong order. This process repeats until no swaps are needed.</p>
           </div>
           <div className="bg-white p-4 rounded-lg border border-green-200">
             <h3 className="font-bold text-lg text-green-700 mb-2">Time Complexity</h3>
-            <p>O(log n) - Extremely efficient for large datasets. Each step halves the search space, making it exponentially faster than linear search.</p>
+            <p>O(n²) - Simple but inefficient for large datasets. Best case O(n) when array is already sorted.</p>
           </div>
           <div className="bg-white p-4 rounded-lg border border-purple-200">
             <h3 className="font-bold text-lg text-purple-700 mb-2">Real-World Uses</h3>
-            <p>Searching in databases, debugging sorted data, dictionary lookups, and any scenario with sorted data where fast retrieval is critical.</p>
+            <p>Educational purposes, small datasets, detecting nearly sorted arrays, and quick implementation for prototyping.</p>
           </div>
         </div>
       </div>
@@ -468,68 +445,14 @@ const BinarySearch = () => {
       <div className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
         <h3 className="font-bold text-lg text-yellow-800 mb-2">Important Notes</h3>
         <ul className="list-disc pl-5 space-y-1 text-yellow-700">
-          <li>Binary search requires the input array to be sorted</li>
-          <li>Ensure all elements are numbers for accurate comparisons</li>
-          <li>Midpoint calculation uses floor division to handle even-sized arrays</li>
-          <li>Always check edge cases: empty array, single-element array, target not in array</li>
+          <li>Bubble sort is stable - equal elements maintain their relative order</li>
+          <li>Can be optimized by detecting if no swaps occurred in a pass</li>
+          <li>Each pass places the largest unsorted element at its correct position</li>
+          <li>Not suitable for large datasets due to O(n²) complexity</li>
         </ul>
       </div>
     </div>
   );
 };
 
-export default BinarySearch;
-"""
-
-# Create the PromptTemplate with partial_variables
-Prompt = PromptTemplate(
-    input_variables=["algorithm"],
-    partial_variables={"golden_example": binary_search_code},
-    template="""
-You are AlgoVerse — an elite AI tutor who generates *production-ready, error-free React pages* that are fully functional and styled using Tailwind CSS.
-
-Your mission: produce an *interactive, narrated learning experience* for the algorithm: {algorithm}.
-
-## Golden Reference — Never Deviate
-Below is a *Binary Search component* example that demonstrates the exact structure, style, libraries, and quality you must match for ALL outputs.
-
-<golden-example>
-{golden_example}
-</golden-example>
-
-## Hard Requirements
-- **Output exactly one <code-file name="{algorithm}.jsx">...</code-file> block** containing the full React component.
-- Must run instantly in Create React App with Tailwind CSS and lucide-react.
-- Absolutely no errors or placeholders — fully functional code only.
-- Follow *Binary Search golden example* exactly for:
-  - Component structure
-  - Voice narration system (SpeechSynthesis API)
-  - Lucide icons for controls
-  - Tailwind classes and responsive layout
-  - Control bar features (play/pause, step, reset, speed)
-  - Input validation and error boxes
-  - Animations and step highlighting
-- Include fade-in header, animated visualization, narrated explanations, and tips section.
-- Must be a **self-contained .jsx file** — no external files.
-- All accessibility rules from golden example (aria-labels, keyboard navigable) must be included.
-
-## Output Structure
-1. <code-file name="{algorithm}.jsx"> — JSX code here — </code-file>
-2. <explanation> — 2–3 sentences explaining what the page does and how to run it. </explanation>
-3. <dependencies> — List: "react", "react-dom", "lucide-react", "tailwindcss". </dependencies>
-4. <metadata> — JSON object with these keys and example values:
-   {{
-      "title": "algorithm_title",
-      "slug": "algorithm_slug",
-      "description": "short_description_of_algorithm",
-      "category": "algorithm_category",
-      "difficulty": "difficulty_level",
-      "path": "/algorithms/{algorithm}",
-      "externalUrl": null
-   }} </metadata>
-
-Make sure the JSON is valid and well-formatted with double quotes, no trailing commas.
-
-Now, generate the {algorithm} page with *the same quality, tone, and polish as the golden example*, including the metadata JSON as specified.
-"""
-)
+export default BubbleSort;

@@ -1,21 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Play, Pause, StepForward, StepBack, RotateCcw } from 'lucide-react';
 
-const LinearSearch = () => {
-  const [array, setArray] = useState([7, 3, 9, 1, 5, 8, 2]);
-  const [target, setTarget] = useState('5');
-  const [currentIndex, setCurrentIndex] = useState(-1);
-  const [foundIndex, setFoundIndex] = useState(-1);
+const MergeSort = () => {
+  const [array, setArray] = useState([38, 27, 43, 3, 9, 82, 10]);
+  const [originalArray, setOriginalArray] = useState([38, 27, 43, 3, 9, 82, 10]);
+  const [steps, setSteps] = useState([]);
+  const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1500);
-  const [stepIndex, setStepIndex] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
-  const [error, setError] = useState('');
-  const [explanation, setExplanation] = useState('Enter array and target value to begin');
-  const [steps, setSteps] = useState([]);
+  const [explanation, setExplanation] = useState('Enter comma-separated numbers and click Start to begin');
   const [showExplanations, setShowExplanations] = useState([]);
+  const [error, setError] = useState('');
 
   const synthRef = useRef(null);
   const utteranceRef = useRef(null);
@@ -27,7 +25,7 @@ const LinearSearch = () => {
       const availableVoices = synthRef.current.getVoices();
       setVoices(availableVoices);
       if (availableVoices.length > 0) {
-        setSelectedVoice(availableVoices[0]);
+        setSelectedVoice(availableVoices.find(v => v.lang.startsWith('en')) || availableVoices[0]);
       }
     };
     loadVoices();
@@ -55,12 +53,10 @@ const LinearSearch = () => {
   useEffect(() => {
     if (steps.length > 0 && stepIndex < steps.length) {
       const step = steps[stepIndex];
-      setCurrentIndex(step.currentIndex);
-      setFoundIndex(step.foundIndex);
       setExplanation(step.explanation);
       setShowExplanations(prev => [...prev, stepIndex]);
 
-      if (voiceEnabled && selectedVoice) {
+      if (voiceEnabled && selectedVoice && synthRef.current) {
         if (synthRef.current.speaking) {
           synthRef.current.cancel();
         }
@@ -73,62 +69,89 @@ const LinearSearch = () => {
   }, [stepIndex, steps, voiceEnabled, selectedVoice]);
 
   const validateInput = () => {
-    setError('');
-    if (!target.trim()) {
-      setError('Please enter a target value');
-      return false;
-    }
-    const numTarget = Number(target);
-    if (isNaN(numTarget)) {
-      setError('Target must be a number');
-      return false;
-    }
     if (array.length === 0) {
       setError('Array cannot be empty');
       return false;
     }
+    if (array.some(isNaN)) {
+      setError('All values must be numbers');
+      return false;
+    }
+    setError('');
     return true;
   };
 
-  const startSearch = () => {
+  const generateSteps = (arr) => {
+    const steps = [];
+    const temp = [...arr];
+    const work = [...arr];
+    let stepCounter = 0;
+
+    const addStep = (explanation, level = 0) => {
+      steps.push({
+        array: [...work],
+        left: [],
+        right: [],
+        merged: [],
+        explanation,
+        level,
+        step: stepCounter++
+      });
+    };
+
+    const mergeSort = (start, end, level) => {
+      if (start < end) {
+        const mid = Math.floor((start + end) / 2);
+        addStep(`Level ${level}: Splitting array [${work.slice(start, end + 1)}] at index ${mid}`, level);
+
+        mergeSort(start, mid, level + 1);
+        mergeSort(mid + 1, end, level + 1);
+
+        const left = work.slice(start, mid + 1);
+        const right = work.slice(mid + 1, end + 1);
+        addStep(`Merging sorted left [${left}] and right [${right}]`, level);
+
+        let i = 0, j = 0, k = start;
+        while (i < left.length && j < right.length) {
+          if (left[i] <= right[j]) {
+            work[k] = left[i];
+            i++;
+          } else {
+            work[k] = right[j];
+            j++;
+          }
+          k++;
+        }
+
+        while (i < left.length) {
+          work[k] = left[i];
+          i++;
+          k++;
+        }
+
+        while (j < right.length) {
+          work[k] = right[j];
+          j++;
+          k++;
+        }
+
+        addStep(`Merged result: [${work.slice(start, end + 1)}]`, level);
+      }
+    };
+
+    addStep('Starting merge sort', 0);
+    mergeSort(0, temp.length - 1, 1);
+    addStep('Merge sort complete! Array is now sorted', 0);
+
+    return steps;
+  };
+
+  const startSort = () => {
     if (!validateInput()) return;
     
-    const numTarget = Number(target);
-    const newSteps = [];
-    let currentFoundIndex = -1;
-
-    newSteps.push({
-      currentIndex: -1,
-      foundIndex: -1,
-      explanation: `Starting linear search: searching for ${numTarget} in [${array.join(', ')}]`
-    });
-
-    for (let i = 0; i < array.length; i++) {
-      newSteps.push({
-        currentIndex: i,
-        foundIndex: -1,
-        explanation: `Step ${i + 1}: Checking index ${i}, value = ${array[i]}`
-      });
-
-      if (array[i] === numTarget) {
-        currentFoundIndex = i;
-        newSteps.push({
-          currentIndex: i,
-          foundIndex: i,
-          explanation: `Found target at index ${i}! Value = ${array[i]}`
-        });
-        break;
-      }
-    }
-
-    if (currentFoundIndex === -1) {
-      newSteps.push({
-        currentIndex: array.length,
-        foundIndex: -1,
-        explanation: `Target ${numTarget} not found in the array`
-      });
-    }
-
+    const currentArray = array.map(Number);
+    setOriginalArray([...currentArray]);
+    const newSteps = generateSteps(currentArray);
     setSteps(newSteps);
     setStepIndex(0);
     setShowExplanations([]);
@@ -139,14 +162,9 @@ const LinearSearch = () => {
     const input = e.target.value;
     const newArray = input.split(',').map(item => {
       const num = Number(item.trim());
-      return isNaN(num) ? 0 : num;
-    });
+      return isNaN(num) ? null : num;
+    }).filter(n => n !== null);
     setArray(newArray);
-    setError('');
-  };
-
-  const handleTargetChange = (e) => {
-    setTarget(e.target.value);
     setError('');
   };
 
@@ -156,7 +174,7 @@ const LinearSearch = () => {
 
   const togglePlay = () => {
     if (steps.length === 0) {
-      startSearch();
+      startSort();
     } else {
       setIsPlaying(!isPlaying);
     }
@@ -174,14 +192,13 @@ const LinearSearch = () => {
     }
   };
 
-  const resetSearch = () => {
+  const resetSort = () => {
     setIsPlaying(false);
     setStepIndex(0);
-    setCurrentIndex(-1);
-    setFoundIndex(-1);
     setSteps([]);
     setShowExplanations([]);
-    setExplanation('Enter array and target value to begin');
+    setExplanation('Enter comma-separated numbers and click Start to begin');
+    setArray([...originalArray]);
     if (synthRef.current && synthRef.current.speaking) {
       synthRef.current.cancel();
     }
@@ -200,19 +217,26 @@ const LinearSearch = () => {
     if (voice) setSelectedVoice(voice);
   };
 
-  const getElementClass = (index) => {
-    if (index === foundIndex) return 'bg-green-500 text-white transform scale-110';
-    if (index === currentIndex) return 'bg-yellow-400 text-black';
-    return 'bg-gray-200 text-black';
+  const getElementStyle = (value, index, step) => {
+    const currentArray = step?.array || [];
+    const isSorted = currentArray.every((v, i) => i === 0 || v >= currentArray[i - 1]);
+    
+    let baseStyle = 'transition-all duration-500 ease-in-out flex flex-col items-center';
+    
+    if (step?.level > 0) {
+      baseStyle += ' transform scale-90';
+    }
+    
+    return baseStyle;
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 font-sans">
+    <div className="max-w-7xl mx-auto p-6 font-sans">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-blue-700 mb-4 animate-fade-in">Linear Search Algorithm</h1>
+        <h1 className="text-4xl font-bold text-blue-700 mb-4 animate-fade-in">Merge Sort Algorithm</h1>
         <p className="text-lg text-gray-700 mb-6">
-          Linear search checks each element sequentially until the target is found or the end is reached.
-          Time complexity: O(n)
+          A divide-and-conquer algorithm that splits arrays into halves, sorts them recursively, and merges the results.
+          Time complexity: O(n log n) - Stable and efficient for large datasets
         </p>
       </div>
 
@@ -221,24 +245,13 @@ const LinearSearch = () => {
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Interactive Demo</h2>
           
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Array (comma separated):</label>
+            <label className="block text-gray-700 mb-2">Array Values (comma separated):</label>
             <input
               type="text"
               value={array.join(',')}
               onChange={handleArrayChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               aria-label="Enter array values separated by commas"
-            />
-          </div>
-          
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Target Value:</label>
-            <input
-              type="text"
-              value={target}
-              onChange={handleTargetChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              aria-label="Enter target value to search"
             />
           </div>
 
@@ -274,9 +287,9 @@ const LinearSearch = () => {
               <StepForward size={20} /> Next
             </button>
             <button
-              onClick={resetSearch}
+              onClick={resetSort}
               className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-              aria-label="Reset search"
+              aria-label="Reset sort"
             >
               <RotateCcw size={20} /> Reset
             </button>
@@ -335,23 +348,26 @@ const LinearSearch = () => {
         <div className="bg-white p-6 rounded-xl shadow-lg">
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Algorithm Visualization</h2>
           
-          <div className="mb-8 flex flex-wrap justify-center gap-2 min-h-[120px] items-end">
-            {array.map((value, index) => (
-              <div 
-                key={index} 
-                className={`flex flex-col items-center transition-all duration-500 ease-in-out ${getElementClass(index)}`}
-                style={{ 
-                  width: '60px', 
-                  height: `${value * 10 + 40}px`,
-                  transition: 'background-color 0.5s, transform 0.5s'
-                }}
-              >
-                <div className="font-bold mb-1">{value}</div>
-                <div className="text-xs mt-auto pb-1">
-                  {index === currentIndex && "CURRENT"}
+          <div className="mb-8">
+            <div className="flex flex-wrap justify-center gap-2 min-h-[120px] items-end">
+              {(steps[stepIndex]?.array || array).map((value, index) => (
+                <div 
+                  key={index} 
+                  className={getElementStyle(value, index, steps[stepIndex])}
+                  style={{ 
+                    width: '60px', 
+                    height: `${value * 3 + 40}px`,
+                    backgroundColor: steps[stepIndex] ? '#3B82F6' : '#E5E7EB',
+                    color: steps[stepIndex] ? 'white' : 'black',
+                    borderRadius: '8px',
+                    padding: '8px',
+                    margin: '2px'
+                  }}
+                >
+                  <div className="font-bold text-sm">{value}</div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
@@ -374,7 +390,7 @@ const LinearSearch = () => {
                   }`}
                 >
                   <div className="font-medium text-blue-700">Step {idx + 1}:</div>
-                  <div>{step.explanation}</div>
+                  <div className="text-sm">{step.explanation}</div>
                 </div>
               ))}
             </div>
@@ -387,15 +403,15 @@ const LinearSearch = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded-lg border border-blue-200">
             <h3 className="font-bold text-lg text-blue-700 mb-2">How It Works</h3>
-            <p>Linear search examines each element one by one from the beginning until it finds the target or reaches the end of the array.</p>
+            <p>Merge sort recursively divides the array into halves until single elements remain, then merges them back in sorted order using a two-pointer technique.</p>
           </div>
           <div className="bg-white p-4 rounded-lg border border-green-200">
             <h3 className="font-bold text-lg text-green-700 mb-2">Time Complexity</h3>
-            <p>O(n) - In the worst case, every element must be checked. Best case O(1) if the target is the first element.</p>
+            <p>O(n log n) - Consistently fast performance. Divide step takes O(log n) and merge step takes O(n) for each level, making it ideal for large datasets.</p>
           </div>
           <div className="bg-white p-4 rounded-lg border border-purple-200">
             <h3 className="font-bold text-lg text-purple-700 mb-2">Real-World Uses</h3>
-            <p>Searching unsorted data, small datasets, single searches in large datasets, or when memory constraints prevent sorting.</p>
+            <p>Sorting large files, merge operations in databases, external sorting in systems with limited memory, and any scenario requiring stable, predictable performance.</p>
           </div>
         </div>
       </div>
@@ -403,14 +419,24 @@ const LinearSearch = () => {
       <div className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
         <h3 className="font-bold text-lg text-yellow-800 mb-2">Important Notes</h3>
         <ul className="list-disc pl-5 space-y-1 text-yellow-700">
-          <li>Linear search works on both sorted and unsorted arrays</li>
-          <li>Ensure all elements are numbers for accurate comparisons</li>
-          <li>Performance degrades linearly with array size</li>
-          <li>Consider binary search for better performance on sorted arrays</li>
+          <li>Merge sort is a stable sort - maintains the relative order of equal elements</li>
+          <li>Requires O(n) additional space for the merge operation</li>
+          <li>Works efficiently on linked lists without extra space</li>
+          <li>Preferred over quicksort when worst-case performance is critical</li>
         </ul>
       </div>
+
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };
 
-export default LinearSearch;
+export default MergeSort;
