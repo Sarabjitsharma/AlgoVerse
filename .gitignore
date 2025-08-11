@@ -7,10 +7,10 @@ __pycache__/
 *.pyd
 
 # Virtual environment
+backend/
+.env
+.env.*
 venv/
-/AlgoVerse_backend/.env
-/AlgoVerse_backend/.env.*
-/AlgoVerse_backend/venv/
 # Remove Windows-style backslashes for consistency
 
 # Python build
