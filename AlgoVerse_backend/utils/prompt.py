@@ -523,7 +523,7 @@ Below is a *Binary Search component* example that demonstrates the exact structu
       "slug": "algorithm_slug",
       "description": "short_description_of_algorithm",
       "category": "algorithm_category",
-      "difficulty": "difficulty_level",
+      "difficulty": "difficulty_level(Beginner/Intermediate/Advanced)",
       "path": "/algorithms/{algorithm}",
       "externalUrl": null
    }} </metadata>

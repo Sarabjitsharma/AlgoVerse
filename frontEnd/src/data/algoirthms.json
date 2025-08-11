@@ -14,7 +14,7 @@
       "slug": "linear-search",
       "description": "Learn how linear search works by stepping through each element in an array to find a target value",
       "category": "searching",
-      "difficulty": "beginner",
+      "difficulty": "Beginner",
       "path": "/algorithms/linear-search",
       "externalUrl": null
     },
@@ -23,7 +23,7 @@
       "slug": "bubble-sort",
       "description": "Interactive visualization of the bubble sort algorithm with step-by-step narration and animation controls",
       "category": "sorting",
-      "difficulty": "easy",
+      "difficulty": "Beginner",
       "path": "/algorithms/bubble-sort",
       "externalUrl": null
     },
@@ -32,7 +32,7 @@
       "slug": "kmp-algorithm",
       "description": "Interactive visualization of the Knuth-Morris-Pratt string matching algorithm with LPS array construction and step-by-step execution.",
       "category": "String Algorithms",
-      "difficulty": "Medium",
+      "difficulty": "Intermediate",
       "path": "/algorithms/kmp",
       "externalUrl": null
     },
@@ -43,6 +43,15 @@
       "category": "Sorting Algorithms",
       "difficulty": "Beginner",
       "path": "/algorithms/insertion-sort",
+      "externalUrl": null
+    },
+    {
+      "title": "Merge Sort Algorithm",
+      "slug": "merge-sort",
+      "description": "Interactive visualization of the divide-and-conquer merge sort algorithm with O(n log n) complexity",
+      "category": "Sorting Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/merge-sort",
       "externalUrl": null
     }
   ]

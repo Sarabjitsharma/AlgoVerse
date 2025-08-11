@@ -56,24 +56,24 @@ export default function Main() {
 
             <div className="hero-stats">
               <div className="stat">
-                <span className="stat-number">{articlesData.articles.length}</span>
+                <span className="stat-number">{articlesData.articles.length}&nbsp;</span>
                 <span className="stat-label">Topics</span>
               </div>
               <div className="stat">
                 <span className="stat-number">
-                  {articlesData.articles.filter(a => a.difficulty === 'Beginner').length}
+                  {articlesData.articles.filter(a => a.difficulty === 'Beginner').length}&nbsp;
                 </span>
                 <span className="stat-label">Beginner</span>
               </div>
               <div className="stat">
                 <span className="stat-number">
-                  {articlesData.articles.filter(a => a.difficulty === 'Intermediate').length}
+                  {articlesData.articles.filter(a => a.difficulty === 'Intermediate').length}&nbsp;
                 </span>
                 <span className="stat-label">Intermediate</span>
               </div>
               <div className="stat">
                 <span className="stat-number">
-                  {articlesData.articles.filter(a => a.difficulty === 'Advanced').length}
+                  {articlesData.articles.filter(a => a.difficulty === 'Advanced').length}&nbsp;
                 </span>
                 <span className="stat-label">Advanced</span>
               </div>
