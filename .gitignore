@@ -1,0 +1,52 @@
+# ==============================
+# Python / FastAPI ignores
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore ONLY the venv inside AlgoVerse_backend
+AlgoVerse_backend/backend/
+
+# Env files
+.env
+.env.*
+venv/
+
+# Python build
+*.egg-info/
+*.egg
+
+# ==============================
+# Node / React Vite ignores
+# ==============================
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# Local env files
+*.local
+
+# ==============================
+# Editor / OS-specific ignores
+# ==============================
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
