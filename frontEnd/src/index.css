@@ -4,7 +4,9 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
-
+main {
+  margin-top: 60px; /* adjust to match your Header height */
+}
 
 
 

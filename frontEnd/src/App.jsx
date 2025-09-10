@@ -6,6 +6,7 @@ import Footer from "./components/Footer.jsx";
 import SideChatButton from "./components/sideButton.jsx";
 import React from "react";
 import { useParams } from "react-router-dom";
+import AuthPage from "./components/AuthPage.jsx";
 
 const pages = import.meta.glob("./algorithms/*.jsx");
 
@@ -28,13 +29,13 @@ export default function App() {
         <>
             <BrowserRouter>
                 <Header />
-              <Routes>
-                <Route path="/" element={<Main />} />
-
-                <Route path="/algorithms/:algoName" element={<AlgoLoader />} />
-
-              </Routes>
-
+                <main>
+                    <Routes>
+                        <Route path="/" element={<Main />} />
+                        <Route path="/algorithms/:algoName" element={<AlgoLoader />} />
+                        <Route path="/auth" element={<AuthPage />} />
+                    </Routes>
+                </main>
                 <SideChatButton />
             </BrowserRouter>
         </>

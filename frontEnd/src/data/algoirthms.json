@@ -53,6 +53,24 @@
       "difficulty": "Intermediate",
       "path": "/algorithms/merge-sort",
       "externalUrl": null
+    },
+    {
+      "title": "Binary Search",
+      "slug": "binary-search",
+      "description": "Visualize binary search on sorted arrays with step-by-step narration and interactive controls",
+      "category": "Searching",
+      "difficulty": "Beginner",
+      "path": "/algorithms/binary-search",
+      "externalUrl": null
+    },
+    {
+      "title": "Heap Sort Algorithm",
+      "slug": "heap-sort",
+      "description": "Interactive visualization of heap sort with step-by-step explanations and voice narration",
+      "category": "Sorting Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/heap-sort",
+      "externalUrl": null
     }
   ]
 }
