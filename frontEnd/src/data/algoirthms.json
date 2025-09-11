@@ -7,7 +7,8 @@
       "category": "Searching",
       "difficulty": "Beginner",
       "path": "/algorithms/binary-search",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": false
     },
     {
       "title": "Linear Search",
@@ -16,7 +17,8 @@
       "category": "searching",
       "difficulty": "Beginner",
       "path": "/algorithms/linear-search",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": true
     },
     {
       "title": "Bubble Sort",
@@ -25,7 +27,8 @@
       "category": "sorting",
       "difficulty": "Beginner",
       "path": "/algorithms/bubble-sort",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": true
     },
     {
       "title": "KMP Algorithm",
@@ -34,7 +37,8 @@
       "category": "String Algorithms",
       "difficulty": "Intermediate",
       "path": "/algorithms/kmp",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": true
     },
     {
       "title": "Insertion Sort Algorithm",
@@ -43,7 +47,8 @@
       "category": "Sorting Algorithms",
       "difficulty": "Beginner",
       "path": "/algorithms/insertion-sort",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": false
     },
     {
       "title": "Merge Sort Algorithm",
@@ -52,7 +57,8 @@
       "category": "Sorting Algorithms",
       "difficulty": "Intermediate",
       "path": "/algorithms/merge-sort",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": true
     },
     {
       "title": "Binary Search",
@@ -61,7 +67,8 @@
       "category": "Searching",
       "difficulty": "Beginner",
       "path": "/algorithms/binary-search",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": false
     },
     {
       "title": "Heap Sort Algorithm",
@@ -70,7 +77,8 @@
       "category": "Sorting Algorithms",
       "difficulty": "Intermediate",
       "path": "/algorithms/heap-sort",
-      "externalUrl": null
+      "externalUrl": null,
+      "isVerified": true
     }
   ]
 }

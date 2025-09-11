@@ -134,16 +134,20 @@ html {
 .article-card {
     background: white;
     border-radius: 15px;
-    padding: 2rem;
+    padding: 2rem 2rem 3rem; /* Combined padding from both files */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     border: 1px solid #e2e8f0;
     cursor: pointer;
+    position: relative; /* This is crucial for the badge */
+    z-index: 0; /* Establish a default stacking context */
 }
+
 
 .article-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    z-index: 1; /* Lift the card on hover */
 }
 
 .article-title {
@@ -290,4 +294,21 @@ footer {
 .cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(251, 191, 36, 0.6);
+}
+
+.human-verified-badge {
+  position: absolute;
+  bottom: 0.75rem; /* 12px */
+  right: 0.75rem; /* 12px */
+  background-color: #e0f2fe; /* Light blue background */
+  color: #0c4a6e; /* Dark blue text */
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem; /* Space between text and icon */
+  border: 1px solid #bae6fd;
+  z-index: 2; /* Make sure badge is on top of card content */
 }

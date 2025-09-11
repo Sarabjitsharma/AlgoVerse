@@ -34,6 +34,12 @@ const ArticleGrid = () => {
                   <span className="external-indicator">🔗 External</span>
                 )}
               </div>
+                {/* This is the new badge, it will only render if isVerified is true */}
+                {article.isVerified && (
+                  <span className="human-verified-badge">
+                    ✅ Human Verified
+                  </span>
+                )}
             </div>
           </a>
         ))}
