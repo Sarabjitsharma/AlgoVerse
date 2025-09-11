@@ -8,7 +8,7 @@ import flowbiteReact from "flowbite-react/plugin/vite";
 export default defineConfig({
   server: {
     open: true, // opens browser automatically
-    host: true,
+    // host: true,
     port: 5173 // or whatever you prefer
   },
   plugins: [tailwindcss(), react(), flowbiteReact()]

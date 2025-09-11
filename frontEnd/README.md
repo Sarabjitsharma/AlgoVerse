@@ -23,4 +23,7 @@ npm install -D react-router-dom
 npx flowbite-react@latest init
 
 
+For auth the `VITE_CLERK_PUBLISHABLE_KEY` needs to be saved in the .env file in the `frontend` folder
+
+
 
