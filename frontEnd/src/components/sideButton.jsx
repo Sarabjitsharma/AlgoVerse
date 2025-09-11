@@ -148,11 +148,11 @@ export default function SideChatButton() {
       </button>
 
       {/* Notification Badge (optional) */}
-      {!isOpen && (
-        <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
-          1
-        </div>
-      )}
+      {/*{!isOpen && (*/}
+      {/*  <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">*/}
+      {/*    1*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </div>
   );
 }
