@@ -238,7 +238,7 @@ const MergeSort = () => {
   };
 
   const getElementClass = (index, value) => {
-    if (currentStep < 0 || currentStep >= steps.length) return 'bg-gray-200 text-black';
+    if (currentStep < 0 || currentStep >= steps.length) return 'bg-gray-200 dark:bg-gray-700 text-black dark:text-white';
     
     const step = steps[currentStep];
     const arrayString = step.array.join(',');
@@ -247,40 +247,40 @@ const MergeSort = () => {
     if (arrayString !== previousArrayString && index < Math.min(array.length, step.array.length)) {
       const prevValue = currentStep > 0 ? steps[currentStep - 1].array[index] : null;
       if (value !== prevValue) {
-        return 'bg-green-400 text-white transform scale-110';
+        return 'bg-green-500 dark:bg-green-600 text-white transform scale-110';
       }
     }
     
-    return 'bg-blue-500 text-white';
+    return 'bg-blue-500 dark:bg-blue-600 text-white';
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 max-w-6xl mx-auto p-6 font-sans">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-blue-700 mb-4 animate-fade-in">Merge Sort Algorithm</h1>
-        <p className="text-lg text-gray-700 mb-6">
+        <h1 className="text-4xl font-bold text-blue-700 dark:text-blue-400 mb-4 animate-fade-in">Merge Sort Algorithm</h1>
+        <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
           Merge sort is a divide-and-conquer algorithm that divides the array into halves, sorts them, and merges the results.
           Time complexity: O(n log n)
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Interactive Demo</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Interactive Demo</h2>
           
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Array Values (comma separated):</label>
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">Array Values (comma separated):</label>
             <input
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               aria-label="Enter array values separated by commas"
             />
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-300">
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg border border-red-300 dark:border-red-600">
               {error}
             </div>
           )}
@@ -288,7 +288,7 @@ const MergeSort = () => {
           <div className="flex flex-wrap gap-3 mb-6">
             <button
               onClick={togglePlay}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
               aria-label={isPlaying ? "Pause animation" : "Start animation"}
             >
               {isPlaying ? <Pause size={20} /> : <Play size={20} />}
@@ -297,7 +297,7 @@ const MergeSort = () => {
             <button
               onClick={stepBackward}
               disabled={currentStep <= 0}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${currentStep <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${currentStep <= 0 ? 'bg-gray-300 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600 text-white'}`}
               aria-label="Previous step"
             >
               <StepBack size={20} /> Back
@@ -305,14 +305,14 @@ const MergeSort = () => {
             <button
               onClick={stepForward}
               disabled={currentStep >= steps.length - 1}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${currentStep >= steps.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${currentStep >= steps.length - 1 ? 'bg-gray-300 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600 text-white'}`}
               aria-label="Next step"
             >
               <StepForward size={20} /> Next
             </button>
             <button
               onClick={resetSort}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
               aria-label="Reset sort"
             >
               <RotateCcw size={20} /> Reset
@@ -320,17 +320,17 @@ const MergeSort = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Animation Speed:</label>
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">Animation Speed:</label>
             <input
               type="range"
               min="100"
               max="1900"
               value={2000 - speed}
               onChange={handleSpeedChange}
-              className="w-full"
+              className="w-full accent-blue-600 dark:accent-blue-400"
               aria-label="Adjust animation speed"
             />
-            <div className="flex justify-between text-sm text-gray-600">
+            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
               <span>Slower</span>
               <span>Faster</span>
             </div>
@@ -339,7 +339,7 @@ const MergeSort = () => {
           <div className="flex items-center gap-4 mb-6">
             <button
               onClick={toggleVoice}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors"
               aria-label={voiceEnabled ? "Disable voice narration" : "Enable voice narration"}
             >
               {voiceEnabled ? <VolumeX size={20} /> : <Volume2 size={20} />}
@@ -350,7 +350,7 @@ const MergeSort = () => {
               <select
                 value={selectedVoice?.name || ''}
                 onChange={handleVoiceChange}
-                className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 aria-label="Select voice type"
               >
                 {voices.map(voice => (
@@ -363,22 +363,22 @@ const MergeSort = () => {
           </div>
 
           {!window.speechSynthesis && (
-            <div className="p-3 bg-yellow-100 text-yellow-700 rounded-lg border border-yellow-300">
+            <div className="p-3 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 rounded-lg border border-yellow-300 dark:border-yellow-600">
               Voice narration unavailable in this browser
             </div>
           )}
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Algorithm Visualization</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Algorithm Visualization</h2>
           
           <div className="mb-8 flex flex-wrap justify-center gap-2 min-h-[120px] items-end">
             {array.map((value, index) => (
-              <div 
-                key={index} 
-                className={`flex flex-col items-center justify-end transition-all duration-500 ease-in-out ${getElementClass(index, value)}`}
-                style={{ 
-                  width: '60px', 
+              <div
+                key={index}
+                className={`flex flex-col items-center justify-end transition-all duration-500 ease-in-out rounded-t-md p-1 ${getElementClass(index, value)}`}
+                style={{
+                  width: '60px',
                   height: `${Math.max(value * 5, 20) + 40}px`,
                   transition: 'background-color 0.5s, transform 0.5s'
                 }}
@@ -391,27 +391,27 @@ const MergeSort = () => {
             ))}
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-            <h3 className="font-bold text-lg text-blue-800 mb-2">Current Step:</h3>
-            <div className="text-gray-800 animate-fade-in">
+          <div className="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg border border-blue-200 dark:border-blue-700 mb-6">
+            <h3 className="font-bold text-lg text-blue-800 dark:text-blue-300 mb-2">Current Step:</h3>
+            <div className="text-gray-800 dark:text-gray-200 animate-fade-in">
               {explanation}
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h3 className="font-bold text-lg text-gray-800 mb-2">Step-by-Step Explanation:</h3>
-            <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100 mb-2">Step-by-Step Explanation:</h3>
+            <div className="space-y-3 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600">
               {steps.map((step, idx) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className={`p-3 rounded-lg border transition-all duration-300 ${
-                    showExplanations.includes(idx) 
-                      ? 'bg-white border-blue-300 shadow-sm' 
-                      : 'bg-gray-100 border-gray-200 opacity-70'
+                    showExplanations.includes(idx)
+                      ? 'bg-white dark:bg-gray-700 border-blue-300 dark:border-blue-500 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-600 opacity-70'
                   }`}
                 >
-                  <div className="font-medium text-blue-700">Step {idx + 1}:</div>
-                  <div>{step.explanation}</div>
+                  <div className="font-medium text-blue-700 dark:text-blue-400">Step {idx + 1}:</div>
+                  <div className="text-gray-800 dark:text-gray-300">{step.explanation}</div>
                 </div>
               ))}
             </div>
@@ -419,27 +419,27 @@ const MergeSort = () => {
         </div>
       </div>
 
-      <div className="mt-10 bg-gray-50 p-6 rounded-xl shadow-lg border border-gray-200 animate-fade-in">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Key Concepts</h2>
+      <div className="mt-10 bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 animate-fade-in">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Key Concepts</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-blue-200">
-            <h3 className="font-bold text-lg text-blue-700 mb-2">How It Works</h3>
-            <p>Divide the array into two halves, recursively sort both halves, then merge the sorted halves back together in order.</p>
+          <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-blue-200 dark:border-blue-600">
+            <h3 className="font-bold text-lg text-blue-700 dark:text-blue-400 mb-2">How It Works</h3>
+            <p className="text-gray-600 dark:text-gray-300">Divide the array into two halves, recursively sort both halves, then merge the sorted halves back together in order.</p>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-green-200">
-            <h3 className="font-bold text-lg text-green-700 mb-2">Time Complexity</h3>
-            <p>O(n log n) - Consistently good performance. The array is divided log n times, and each merge operation takes O(n) time.</p>
+          <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-green-200 dark:border-green-600">
+            <h3 className="font-bold text-lg text-green-700 dark:text-green-400 mb-2">Time Complexity</h3>
+            <p className="text-gray-600 dark:text-gray-300">O(n log n) - Consistently good performance. The array is divided log n times, and each merge operation takes O(n) time.</p>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-purple-200">
-            <h3 className="font-bold text-lg text-purple-700 mb-2">Real-World Uses</h3>
-            <p>Sorting large datasets, external sorting for files too large for memory, and any scenario requiring stable sorting.</p>
+          <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-purple-200 dark:border-purple-600">
+            <h3 className="font-bold text-lg text-purple-700 dark:text-purple-400 mb-2">Real-World Uses</h3>
+            <p className="text-gray-600 dark:text-gray-300">Sorting large datasets, external sorting for files too large for memory, and any scenario requiring stable sorting.</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-        <h3 className="font-bold text-lg text-yellow-800 mb-2">Important Notes</h3>
-        <ul className="list-disc pl-5 space-y-1 text-yellow-700">
+      <div className="mt-8 p-4 bg-yellow-50 dark:bg-yellow-900/50 rounded-lg border border-yellow-200 dark:border-yellow-700">
+        <h3 className="font-bold text-lg text-yellow-800 dark:text-yellow-300 mb-2">Important Notes</h3>
+        <ul className="list-disc pl-5 space-y-1 text-yellow-700 dark:text-yellow-400">
           <li>Merge sort requires additional O(n) space for the temporary arrays</li>
           <li>It's a stable sort - maintains the relative order of equal elements</li>
           <li>Works well for linked lists and external sorting</li>
@@ -451,3 +451,4 @@ const MergeSort = () => {
 };
 
 export default MergeSort;
+

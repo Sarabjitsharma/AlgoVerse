@@ -79,6 +79,24 @@
       "path": "/algorithms/heap-sort",
       "externalUrl": null,
       "isVerified": true
+    },
+    {
+      "title": "Linear Regression",
+      "slug": "linear-regression",
+      "description": "Interactive visualization of linear regression algorithm using least squares method",
+      "category": "Machine Learning",
+      "difficulty": "Beginner",
+      "path": "/algorithms/linear-regression",
+      "externalUrl": null
+    },
+    {
+      "title": "Tower of Hanoi",
+      "slug": "tower-of-hanoi",
+      "description": "Interactive visualization of the Tower of Hanoi recursive puzzle algorithm with voice narration and step-by-step animations",
+      "category": "Recursive Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/tower-of-hanoi",
+      "externalUrl": null
     }
   ]
 }
