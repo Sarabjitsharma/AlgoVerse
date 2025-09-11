@@ -6,6 +6,8 @@ export default {
     "./node_modules/flowbite-react/**/*.js",
     "./node_modules/flowbite/**/*.js",
   ],
+  darkMode: 'class', // enables `dark:` classes based on a global class
+
   theme: {
     extend: {},
   },

@@ -1,7 +1,36 @@
 import { Link } from "react-router-dom";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
 
 export default function Header() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  // ✅ Load theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  // ✅ Toggle and save theme
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("theme", newMode ? "dark" : "light");
+
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
+
   return (
     <header>
       <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -14,9 +43,18 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Right side (Login/User + Mobile menu toggle) */}
-          <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            {/* ✅ Clerk Auth Buttons */}
+          {/* Right side (DarkMode Toggle + Login/User + Mobile menu toggle) */}
+          <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse items-center">
+            {/* ✅ Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              aria-label="Toggle Dark Mode"
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            {/* Clerk Auth Buttons */}
             <SignedOut>
               <SignInButton mode="modal">
                 <button
