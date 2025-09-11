@@ -370,3 +370,37 @@ html.dark .floating-circle {
     opacity: 0.8;
     display: block;
 }
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination-btn {
+  background-color: #4f46e5; /* Indigo-600 */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #4338ca; /* darker Indigo */
+}
+
+.pagination-btn:disabled {
+  background-color: #c7c7c7;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-weight: 500;
+  color: #111827; /* Gray-900 */
+}
