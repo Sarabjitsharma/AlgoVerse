@@ -1,9 +1,16 @@
 // import
 import articlesData from '../data/algoirthms.json'; // typo:  algorithms -> algoirthms
 import "./style.css"
-
+import { useUser } from "@clerk/clerk-react";
 
 const ArticleGrid = () => {
+  const { user } = useUser();
+  // if (!isSignedIn) {
+  //     return <p>Please sign in to view articles.</p>;
+  // }
+
+  // Always check before accessing metadata
+  const isAdmin = user?.publicMetadata?.isAdmin || false;
   const articles = articlesData.articles;
 
   return (
@@ -34,12 +41,23 @@ const ArticleGrid = () => {
                   <span className="external-indicator">🔗 External</span>
                 )}
               </div>
-                {/* This is the new badge, it will only render if isVerified is true */}
-                {article.isVerified && (
-                  <span className="human-verified-badge">
-                    ✅ Human Verified
-                  </span>
+              {/* This is the new badge, it will only render if isVerified is true */}
+              {article.isVerified && (
+                <span className="human-verified-badge">
+                  ✅ Human Verified
+                </span>
+              )}
+              <div>
+                {isAdmin && (
+                  <label>
+                    Verify this article &nbsp;
+                    <input
+                      type="checkbox"
+                    // Add your checkbox props here
+                    />
+                  </label>
                 )}
+              </div>
             </div>
           </a>
         ))}
@@ -57,8 +75,10 @@ export default function Main() {
           <p className="hero-subtitle">Master Data Structures & Algorithms</p>
 
           <div className="hero-description">
-            <p>Learn essential algorithms and data structures through interactive examples, practice problems, and comprehensive tutorials.</p>
-            <p>From basic sorting algorithms to advanced graph theory - everything you need for coding interviews and competitive programming.</p>
+            <p>Learn essential algorithms and data structures through interactive examples, practice
+              problems, and comprehensive tutorials.</p>
+            <p>From basic sorting algorithms to advanced graph theory - everything you need for coding
+              interviews and competitive programming.</p>
 
             <div className="hero-stats">
               <div className="stat">
