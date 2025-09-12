@@ -404,3 +404,30 @@ html.dark .floating-circle {
   font-weight: 500;
   color: #111827; /* Gray-900 */
 }
+/* Dropdown styles */
+.category-dropdown {
+  background: var(--background-card);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+/* Hover / Focus */
+.category-dropdown:hover,
+.category-dropdown:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4); /* accent glow */
+}
+
+/* Dropdown Options */
+.category-dropdown option {
+  background: var(--background-card);
+  color: var(--text-primary);
+}

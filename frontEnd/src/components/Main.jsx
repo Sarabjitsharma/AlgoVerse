@@ -44,27 +44,29 @@ const ArticleGrid = () => {
       <h2 className="section-title">Algorithm</h2>
 
       {/* Category dropdown */}
-      <div className="mb-4">
-        <label
-          htmlFor="category-filter"
-          className="article-title text-gray-900 dark:text-gray-100"
-        >
+      <div className="category-filter">
+        <label htmlFor="category-filter" className="article-title">
           Filter by Category:
         </label>
         <select
           id="category-filter"
           value={category}
-          onChange={(e) => { setCategory(e.target.value); setCurrentPage(1); }}
-          className="ml-2 p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setCurrentPage(1); // reset to first page on change
+          }}
+          className="category-dropdown"
         >
           <option value="All">All</option>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
-
-
+      
+      
       <div className="articles-grid">
         {paginatedArticles.map(article => (
           <a

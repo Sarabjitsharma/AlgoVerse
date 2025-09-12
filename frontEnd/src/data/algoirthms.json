@@ -1,15 +1,6 @@
 {
   "articles": [
-    {
-      "title": "Binary Search",
-      "slug": "binary-search",
-      "description": "Learn how binary search efficiently finds elements in sorted arrays with O(log n) time complexity.",
-      "category": "Searching",
-      "difficulty": "Beginner",
-      "path": "/algorithms/binary-search",
-      "externalUrl": null,
-      "isVerified": false
-    },
+
     {
       "title": "Linear Search",
       "slug": "linear-search",
@@ -61,16 +52,6 @@
       "isVerified": true
     },
     {
-      "title": "Binary Search",
-      "slug": "binary-search",
-      "description": "Visualize binary search on sorted arrays with step-by-step narration and interactive controls",
-      "category": "Searching",
-      "difficulty": "Beginner",
-      "path": "/algorithms/binary-search",
-      "externalUrl": null,
-      "isVerified": false
-    },
-    {
       "title": "Heap Sort Algorithm",
       "slug": "heap-sort",
       "description": "Interactive visualization of heap sort with step-by-step explanations and voice narration",
@@ -97,6 +78,16 @@
       "difficulty": "Intermediate",
       "path": "/algorithms/tower-of-hanoi",
       "externalUrl": null
+    },
+      {
+    "title": "Red Black Tree",
+    "slug": "red-black-trees",
+    "description": "Interactive visualization of the divide-and-conquer merge sort algorithm with O(n log n) complexity",
+    "category": "Trees",
+    "difficulty": "Advanced",
+    "path": "/algorithms/red-black-trees",
+    "externalUrl": null,
+    "isVerified": true
     }
   ]
 }
