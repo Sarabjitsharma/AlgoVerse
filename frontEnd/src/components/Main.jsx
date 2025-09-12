@@ -122,4 +122,57 @@ const ArticleGrid = () => {
   );
 };
 
-export default ArticleGrid;
+export default function Main() {
+  return (
+    <main>
+      <section className="hero">
+        <div className="container">
+          <h1>DSA Learning Hub</h1>
+          <p className="hero-subtitle">Master Data Structures & Algorithms</p>
+
+          <div className="hero-description">
+            <p>Learn essential algorithms and data structures through interactive examples, practice
+              problems, and comprehensive tutorials.</p>
+            <p>From basic sorting algorithms to advanced graph theory - everything you need for coding
+              interviews and competitive programming.</p>
+
+            <div className="hero-stats">
+              <div className="stat">
+                <span className="stat-number">{articlesData.articles.length}</span>
+                <span className="stat-label">Topics</span>
+              </div>
+              <div className="stat">
+                <span className="stat-number">
+                  {articlesData.articles.filter(a => a.difficulty === 'Beginner').length}
+                </span>
+                <span className="stat-label">Beginner</span>
+              </div>
+              <div className="stat">
+                <span className="stat-number">
+                  {articlesData.articles.filter(a => a.difficulty === 'Intermediate').length}
+                </span>
+                <span className="stat-label">Intermediate</span>
+              </div>
+              <div className="stat">
+                <span className="stat-number">
+                  {articlesData.articles.filter(a => a.difficulty === 'Advanced').length}
+                </span>
+                <span className="stat-label">Advanced</span>
+              </div>
+            </div>
+
+            <a href="#articles" className="cta-button">
+              <div className="text-gray-100">
+                Start Learning →
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="articles-section" id="articles">
+        <ArticleGrid />
+      </section>
+    </main>
+  )
+}
