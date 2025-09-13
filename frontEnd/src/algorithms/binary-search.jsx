@@ -148,6 +148,39 @@ int main() {
   );
 };
 
+const practiceProblems = [
+  {
+    id: 'leetcode-binary-search',
+    platform: 'LeetCode',
+    url: 'https://leetcode.com/problems/binary-search/',
+    description: 'A classic problem to implement the binary search algorithm from scratch.',
+    difficulty: 'Easy'
+  },
+  {
+    id: 'hackerrank-icecream-parlor',
+    platform: 'HackerRank',
+    url: 'https://www.hackerrank.com/challenges/icecream-parlor/problem',
+    description: '"Ice Cream Parlor" - A problem where you find two items that sum up to a target.',
+    difficulty: 'Medium'
+  },
+  {
+    id: 'codeforces-interesting-drink',
+    platform: 'Codeforces',
+    url: 'https://codeforces.com/problemset/problem/706/B',
+    description: '"Interesting drink" - a problem that can be efficiently solved using binary search.',
+    difficulty: 'Easy'
+  }
+];
+
+const getDifficultyClass = (difficulty) => {
+  switch (difficulty) {
+    case 'Easy': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+    case 'Medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+    case 'Hard': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300';
+  }
+};
+
 const BinarySearch = () => {
   const [array, setArray] = useState([2, 4, 6, 8, 10, 12, 14, 16, 18, 20]);
   const [target, setTarget] = useState('12');
@@ -166,10 +199,32 @@ const BinarySearch = () => {
   const [steps, setSteps] = useState([]);
   const [showExplanations, setShowExplanations] = useState([]);
   const [isSorted, setIsSorted] = useState(true);
+  const [completedProblems, setCompletedProblems] = useState({});
 
   const synthRef = useRef(null);
   const utteranceRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  // Load completed problems from localStorage on mount
+  useEffect(() => {
+    try {
+        const savedCompleted = localStorage.getItem('completedBinarySearchProblems');
+        if (savedCompleted) {
+            setCompletedProblems(JSON.parse(savedCompleted));
+        }
+    } catch (error) {
+        console.error("Could not parse completed problems from localStorage", error);
+    }
+  }, []);
+
+  // Save completed problems to localStorage on change
+  useEffect(() => {
+    try {
+        localStorage.setItem('completedBinarySearchProblems', JSON.stringify(completedProblems));
+    } catch (error) {
+        console.error("Could not save completed problems to localStorage", error);
+    }
+  }, [completedProblems]);
 
   useEffect(() => {
     // Check if window.speechSynthesis is available
@@ -231,6 +286,13 @@ const BinarySearch = () => {
       }
     }
   }, [stepIndex, steps, voiceEnabled, selectedVoice]);
+
+  const handleProblemComplete = (problemId) => {
+    setCompletedProblems(prev => ({
+        ...prev,
+        [problemId]: !prev[problemId]
+    }));
+  };
 
   const validateInput = () => {
     setError('');
@@ -629,6 +691,44 @@ const BinarySearch = () => {
           <li>Always check edge cases: empty array, single-element array, target not in array.</li>
         </ul>
       </div>
+
+      <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 animate-fade-in">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Practice Problems</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {practiceProblems.map((problem) => {
+            const isCompleted = completedProblems[problem.id];
+            return (
+              <div
+                key={problem.id}
+                className={`flex flex-col p-4 rounded-lg border bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 transition-all duration-300 ${isCompleted ? 'opacity-60 bg-gray-100 dark:bg-gray-800' : 'hover:shadow-lg hover:scale-105'}`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg text-blue-700 dark:text-blue-400">
+                    <a href={problem.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      {problem.platform}
+                    </a>
+                  </h3>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getDifficultyClass(problem.difficulty)}`}>
+                    {problem.difficulty}
+                  </span>
+                </div>
+                <p className={`flex-grow text-gray-700 dark:text-gray-300 mb-4 ${isCompleted ? 'line-through' : ''}`}>{problem.description}</p>
+                <div className="flex items-center mt-auto">
+                  <input
+                    type="checkbox"
+                    id={`checkbox-${problem.id}`}
+                    checked={!!isCompleted}
+                    onChange={() => handleProblemComplete(problem.id)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <label htmlFor={`checkbox-${problem.id}`} className="ml-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">Mark as completed</label>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      
       <CodeEditor />
     </div>
   );
