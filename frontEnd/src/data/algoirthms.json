@@ -1,6 +1,5 @@
 {
   "articles": [
-
     {
       "title": "Linear Search",
       "slug": "linear-search",
@@ -79,15 +78,74 @@
       "path": "/algorithms/tower-of-hanoi",
       "externalUrl": null
     },
-      {
-    "title": "Red Black Tree",
-    "slug": "red-black-trees",
-    "description": "Interactive visualization of the divide-and-conquer merge sort algorithm with O(n log n) complexity",
-    "category": "Trees",
-    "difficulty": "Advanced",
-    "path": "/algorithms/red-black-trees",
-    "externalUrl": null,
-    "isVerified": true
+    {
+      "title": "Red Black Tree",
+      "slug": "red-black-trees",
+      "description": "Interactive visualization of the divide-and-conquer merge sort algorithm with O(n log n) complexity",
+      "category": "Trees",
+      "difficulty": "Advanced",
+      "path": "/algorithms/red-black-trees",
+      "externalUrl": null,
+      "isVerified": true
+    },
+    {
+      "title": "Dijkstra Algorithm",
+      "slug": "dijkstra-algorithm",
+      "description": "Interactive step-by-step visualization of Dijkstra's shortest-path algorithm with voice narration and animated graph display.",
+      "category": "Graph Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/dijkstra-algorithm",
+      "externalUrl": null
+    },
+    {
+      "title": "Binary Search",
+      "slug": "binary-search",
+      "description": "Efficiently locate an item in a sorted array by repeatedly dividing the search interval in half.",
+      "category": "Searching",
+      "difficulty": "Beginner",
+      "path": "/algorithms/binary-search",
+      "externalUrl": null
+    },
+    {
+      "title": "Dijkstra's Algorithm",
+      "slug": "dijkstra-algorithm",
+      "description": "Interactive visualization of Dijkstra's algorithm for finding shortest paths in weighted graphs",
+      "category": "Graph Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/dijkstra-algorithm",
+      "externalUrl": null
+    },
+    {
+      "title": "Quick Sort",
+      "slug": "quick-sort",
+      "description": "Interactive visualization of the Quick Sort divide-and-conquer sorting algorithm with step-by-step explanations and voice narration",
+      "category": "Sorting Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/quick-sort",
+      "externalUrl": null
+    },
+    {
+      "title": "Binary Search",
+      "slug": "binary-search",
+      "description": "Learn binary search algorithm with interactive visualization and voice narration",
+      "category": "Searching",
+      "difficulty": "Beginner",
+      "path": "/algorithms/binary-search",
+      "externalUrl": null
+    },
+    {
+      "title": "Selection Sort Algorithm",
+      "slug": "selection-sort",
+      "description": "Interactive visualization of the selection sort algorithm with step-by-step explanations and code examples",
+      "category": "Sorting Algorithms",
+      "difficulty": "Beginner",
+      "path": "/algorithms/selection-sort",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-selection-sort",
+        "hackerrank-selection-sort",
+        "geeksforgeeks-selection-sort"
+      ]
     }
   ]
 }

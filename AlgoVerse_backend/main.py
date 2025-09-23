@@ -6,12 +6,13 @@ import langchain
 from model import llm
 import os
 from utils import Prompt
+
 app = FastAPI()
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # your frontend origin
+    allow_origins=["http://localhost:5174", "http://localhost:5173"],  # your frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -19,29 +20,32 @@ app.add_middleware(
 
 
 class AlgoMaker(BaseModel):
-    Algo_name :str
+    Algo_name: str
+
 
 @app.get("/")
 def home():
     return "hehe"
 
+
 @app.post("/make")
-def make_algo(req:AlgoMaker):
-    start= time.time()
+def make_algo(req: AlgoMaker):
+    start = time.time()
     query = req.Algo_name
-    
-    input = {"algorithm":query}
+
+    input = {"algorithm": query}
     chain = Prompt | llm
     code = chain.invoke(input).content
-    file = query+".jsx"
+    file = query + ".jsx"
     print(code)
     extracted_metadata = extract_metadata(code)
     print(extracted_metadata)
     add_metadata_to_json(extracted_metadata)
-    code = clean_output(code) 
+    code = clean_output(code)
     # print("chotu", code)  
-    print(time.time()-start)
-    return write_react_app_to_file(code,file)
+    print(time.time() - start)
+    return write_react_app_to_file(code, file)
+
 
 def write_react_app_to_file(code: str, filename: str = 'App.tsx') -> None:
     path = os.path.join('../frontEnd/src/algorithms', filename)
@@ -49,7 +53,9 @@ def write_react_app_to_file(code: str, filename: str = 'App.tsx') -> None:
         file.write(code)
     # print(f"File '{filename}' has been created successfully.{code}")
 
+
 import json
+
 
 def extract_metadata(raw_output: str):
     metadata_match = re.search(r"<metadata>\s*(\{.*?\})\s*</metadata>", raw_output, flags=re.DOTALL)
@@ -78,7 +84,7 @@ def add_metadata_to_json(metadata: dict, json_path: str = '../frontEnd/src/data/
 
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
-        
+
         return True
     except Exception as e:
         print(f"Error updating JSON file: {e}")
@@ -98,4 +104,3 @@ def clean_output(answer):
 
     cleaned = re.sub(r"\n{3,}", "\n\n", extracted)
     return cleaned
-    

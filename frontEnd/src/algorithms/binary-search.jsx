@@ -154,7 +154,7 @@ const practiceProblems = [
     platform: 'LeetCode',
     url: 'https://leetcode.com/problems/binary-search/',
     description: 'A classic problem to implement the binary search algorithm from scratch.',
-    difficulty: 'Easy'
+    difficulty: 'Easy',
   },
   {
     id: 'hackerrank-icecream-parlor',
