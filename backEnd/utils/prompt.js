@@ -1,7 +1,7 @@
-from langchain_core.prompts import PromptTemplate
+import {PromptTemplate} from "@langchain/core/prompts"
 
-# Store your Binary Search JSX example exactly as it is
-binary_search_code = """
+const binary_search_code = `
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Play, Pause, StepForward, StepBack, RotateCcw, PlayCircle } from 'lucide-react';
 
@@ -12,7 +12,7 @@ const CodeEditor = () => {
   const [isRunning, setIsRunning] = useState(false);
 
   const codeSnippets = {
-    javascript: `function binarySearch(arr, target) {
+    javascript: "function binarySearch(arr, target) {
   let low = 0;
   let high = arr.length - 1;
 
@@ -32,8 +32,8 @@ const CodeEditor = () => {
 const arr = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 const target = 12;
 const result = binarySearch(arr, target);
-console.log(\`Target \${target} found at index: \${result}\`);`,
-    python: `def binary_search(arr, target):
+console.log(\"Target \{target} found at index: \{result}\");",
+    python: "def binary_search(arr, target):
     low = 0
     high = len(arr) - 1
     
@@ -50,8 +50,8 @@ console.log(\`Target \${target} found at index: \${result}\`);`,
 arr = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 target = 12
 result = binary_search(arr, target)
-print(f"Target {target} found at index: {result}")`,
-    cpp: `#include <iostream>
+print(f"Target {target} found at index: {result}")",
+    cpp: "#include <iostream>
 #include <vector>
 
 int binarySearch(const std::vector<int>& arr, int target) {
@@ -77,7 +77,7 @@ int main() {
     int result = binarySearch(arr, target);
     std::cout << "Target " << target << " found at index: " << result << std::endl;
     return 0;
-}`
+}"
   };
 
   useEffect(() => {
@@ -107,7 +107,7 @@ int main() {
   const LanguageButton = ({ lang, children }) => (
     <button
       onClick={() => setLanguage(lang)}
-      className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${language === lang ? 'bg-gray-700 dark:bg-gray-900 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'}`}
+      className={"px-4 py-2 text-sm font-medium rounded-t-lg transition-colors {language === lang ? 'bg-gray-700 dark:bg-gray-900 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'}"}
     >
       {children}
     </button>
@@ -342,7 +342,7 @@ const BinarySearch = () => {
       high: currentHigh,
       mid: -1,
       foundIndex: -1,
-      explanation: `Starting binary search: low=${currentLow}, high=${currentHigh}, target=${numTarget}`
+      explanation: "Starting binary search: low={currentLow}, high={currentHigh}, target={numTarget}"
     });
 
     while (currentLow <= currentHigh) {
@@ -354,7 +354,7 @@ const BinarySearch = () => {
         high: currentHigh,
         mid: currentMid,
         foundIndex: -1,
-        explanation: `Step ${stepCounter}: Calculating mid = floor((${currentLow} + ${currentHigh}) / 2) = ${currentMid}`
+        explanation: "Step {stepCounter}: Calculating mid = floor(({currentLow} + {currentHigh}) / 2) = {currentMid}"
       });
 
       if (array[currentMid] === numTarget) {
@@ -364,7 +364,7 @@ const BinarySearch = () => {
           high: currentHigh,
           mid: currentMid,
           foundIndex: currentMid,
-          explanation: `Found target at index ${currentMid}! Value = ${array[currentMid]}`
+          explanation: "Found target at index {currentMid}! Value = {array[currentMid]}"
         });
         break;
       } else if (array[currentMid] < numTarget) {
@@ -373,7 +373,7 @@ const BinarySearch = () => {
           high: currentHigh,
           mid: currentMid,
           foundIndex: -1,
-          explanation: `${array[currentMid]} < ${numTarget}, so set low = mid + 1 = ${currentMid + 1}`
+          explanation: "{array[currentMid]} < {numTarget}, so set low = mid + 1 = {currentMid + 1}"
         });
         currentLow = currentMid + 1;
       } else {
@@ -382,7 +382,7 @@ const BinarySearch = () => {
           high: currentHigh,
           mid: currentMid,
           foundIndex: -1,
-          explanation: `${array[currentMid]} > ${numTarget}, so set high = mid - 1 = ${currentMid - 1}`
+          explanation: "{array[currentMid]} > {numTarget}, so set high = mid - 1 = {currentMid - 1}"
         });
         currentHigh = currentMid - 1;
       }
@@ -394,7 +394,7 @@ const BinarySearch = () => {
         high: -1,
         mid: -1,
         foundIndex: -1,
-        explanation: `Target ${numTarget} not found in the array`
+        explanation: "Target {numTarget} not found in the array"
       });
     }
 
@@ -542,7 +542,7 @@ const BinarySearch = () => {
             <button
               onClick={stepBackward}
               disabled={stepIndex === 0}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex === 0 ? 'bg-gray-300 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white shadow-md'}`}
+              className={"flex items-center gap-2 px-4 py-2 rounded-lg transition-colors {stepIndex === 0 ? 'bg-gray-300 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white shadow-md'}"}
               aria-label="Previous step"
             >
               <StepBack size={20} /> Back
@@ -550,7 +550,7 @@ const BinarySearch = () => {
             <button
               onClick={stepForward}
               disabled={stepIndex >= steps.length - 1}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${stepIndex >= steps.length - 1 ? 'bg-gray-300 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white shadow-md'}`}
+              className={"flex items-center gap-2 px-4 py-2 rounded-lg transition-colors {stepIndex >= steps.length - 1 ? 'bg-gray-300 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700 text-white shadow-md'}"}
               aria-label="Next step"
             >
               <StepForward size={20} /> Next
@@ -621,10 +621,10 @@ const BinarySearch = () => {
             {array.map((value, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center justify-end p-1 rounded-t-md transition-all duration-500 ease-in-out ${getElementClass(index)}`}
+                className={"flex flex-col items-center justify-end p-1 rounded-t-md transition-all duration-500 ease-in-out {getElementClass(index)}"}
                 style={{
                   width: '50px',
-                  height: `${Math.max(value * 5 + 40, 60)}px`,
+                  height: "{Math.max(value * 5 + 40, 60)}px",
                 }}
               >
                 <span className="font-bold text-sm mb-1">{value}</span>
@@ -651,13 +651,13 @@ const BinarySearch = () => {
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-lg border transition-all duration-300 ${
+                  className={"p-3 rounded-lg border transition-all duration-300 {
                     stepIndex === idx
                       ? 'bg-blue-100 dark:bg-blue-900 dark:border-blue-500 shadow-md scale-105'
                       : showExplanations.includes(idx)
                         ? 'bg-white dark:bg-gray-700 dark:border-blue-500 shadow-sm'
                         : 'bg-gray-100 dark:bg-gray-800 dark:border-gray-700 opacity-70'
-                  }`}
+                  }"}
                 >
                   <div className="font-medium text-blue-700 dark:text-blue-400">Step {idx + 1}:</div>
                   <div className="text-gray-800 dark:text-gray-300">{step.explanation}</div>
@@ -704,7 +704,7 @@ const BinarySearch = () => {
             return (
               <div
                 key={problem.id}
-                className={`flex flex-col p-4 rounded-lg border bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 transition-all duration-300 ${isCompleted ? 'opacity-60 bg-gray-100 dark:bg-gray-800' : 'hover:shadow-lg hover:scale-105'}`}
+                className={"flex flex-col p-4 rounded-lg border bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 transition-all duration-300 {isCompleted ? 'opacity-60 bg-gray-100 dark:bg-gray-800' : 'hover:shadow-lg hover:scale-105'}"}
               >
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-lg text-blue-700 dark:text-blue-400">
@@ -712,20 +712,20 @@ const BinarySearch = () => {
                       {problem.platform}
                     </a>
                   </h3>
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getDifficultyClass(problem.difficulty)}`}>
+                  <span className={"px-2 py-1 text-xs font-semibold rounded-full {getDifficultyClass(problem.difficulty)}"}>
                     {problem.difficulty}
                   </span>
                 </div>
-                <p className={`flex-grow text-gray-700 dark:text-gray-300 mb-4 ${isCompleted ? 'line-through' : ''}`}>{problem.description}</p>
+                <p className={"flex-grow text-gray-700 dark:text-gray-300 mb-4 {isCompleted ? 'line-through' : ''}"}>{problem.description}</p>
                 <div className="flex items-center mt-auto">
                   <input
                     type="checkbox"
-                    id={`checkbox-${problem.id}`}
+                    id={"checkbox-{problem.id}"}
                     checked={!!isCompleted}
                     onChange={() => handleProblemComplete(problem.id)}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
-                  <label htmlFor={`checkbox-${problem.id}`} className="ml-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">Mark as completed</label>
+                  <label htmlFor={"checkbox-{problem.id}"} className="ml-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">Mark as completed</label>
                 </div>
               </div>
             );
@@ -739,60 +739,60 @@ const BinarySearch = () => {
 };
 
 export default BinarySearch;
+`
 
 
-"""
+const Prompt = new PromptTemplate({
+    inputVariables:['algorithm'],
+    partialVariables : {'golden_example':binary_search_code},
+    template : `
+        You are AlgoVerse — an elite AI tutor who generates *production-ready, error-free React pages* that are fully functional and styled using Tailwind CSS.
 
-# Create the PromptTemplate with partial_variables
-Prompt = PromptTemplate(
-    input_variables=["algorithm"],
-    partial_variables={"golden_example": binary_search_code},
-    template="""
-You are AlgoVerse — an elite AI tutor who generates *production-ready, error-free React pages* that are fully functional and styled using Tailwind CSS.
+        Your mission: produce an *interactive, narrated learning experience* for the algorithm: {algorithm}.
 
-Your mission: produce an *interactive, narrated learning experience* for the algorithm: {algorithm}.
+        ## Golden Reference — Never Deviate
+        Below is a *Binary Search component* example that demonstrates the exact structure, style, libraries, and quality you must match for ALL outputs.
 
-## Golden Reference — Never Deviate
-Below is a *Binary Search component* example that demonstrates the exact structure, style, libraries, and quality you must match for ALL outputs.
+        <golden-example>
+        {golden_example}
+        </golden-example>
 
-<golden-example>
-{golden_example}
-</golden-example>
+        ## Hard Requirements
+        - **Output exactly one <code-file name="{algorithm}.jsx">...</code-file> block** containing the full React component.
+        - Must run instantly in Create React App with Tailwind CSS and lucide-react.
+        - Absolutely no errors or placeholders — fully functional code only.
+        - Follow *Binary Search golden example* exactly for:
+        - Component structure
+        - Voice narration system (SpeechSynthesis API)
+        - Lucide icons for controls
+        - Tailwind classes with optional Dark Mode and responsive layout
+        - Control bar features (play/pause, step, reset, speed)
+        - Input validation and error boxes
+        - Animations and step highlighting
+        - Include fade-in header, animated visualization, narrated explanations, and tips section.
+        - Must be a **self-contained .jsx file** — no external files.
+        - All accessibility rules from golden example (aria-labels, keyboard navigable) must be included.
 
-## Hard Requirements
-- **Output exactly one <code-file name="{algorithm}.jsx">...</code-file> block** containing the full React component.
-- Must run instantly in Create React App with Tailwind CSS and lucide-react.
-- Absolutely no errors or placeholders — fully functional code only.
-- Follow *Binary Search golden example* exactly for:
-  - Component structure
-  - Voice narration system (SpeechSynthesis API)
-  - Lucide icons for controls
-  - Tailwind classes with optional Dark Mode and responsive layout
-  - Control bar features (play/pause, step, reset, speed)
-  - Input validation and error boxes
-  - Animations and step highlighting
-- Include fade-in header, animated visualization, narrated explanations, and tips section.
-- Must be a **self-contained .jsx file** — no external files.
-- All accessibility rules from golden example (aria-labels, keyboard navigable) must be included.
+        ## Output Structure
+        1. <code-file name="{algorithm}.jsx"> — JSX code here — </code-file>
+        2. <explanation> — 2-3 sentences explaining what the page does and how to run it. </explanation>
+        3. <dependencies> — List: "react", "react-dom", "lucide-react", "tailwindcss". </dependencies>
+        4. <metadata> — JSON object with these keys and example values:
+        {{
+            "title": "algorithm_title",
+            "slug": "algorithm_slug",
+            "description": "short_description_of_algorithm",
+            "category": "algorithm_category",
+            "difficulty": "difficulty_level(Beginner/Intermediate/Advanced)",
+            "path": "/algorithms/{algorithm}",
+            "externalUrl": null,
+            "practiceProblems":[list_of_all_the_practiceProblems.id]
+        }} </metadata>
 
-## Output Structure
-1. <code-file name="{algorithm}.jsx"> — JSX code here — </code-file>
-2. <explanation> — 2–3 sentences explaining what the page does and how to run it. </explanation>
-3. <dependencies> — List: "react", "react-dom", "lucide-react", "tailwindcss". </dependencies>
-4. <metadata> — JSON object with these keys and example values:
-   {{
-      "title": "algorithm_title",
-      "slug": "algorithm_slug",
-      "description": "short_description_of_algorithm",
-      "category": "algorithm_category",
-      "difficulty": "difficulty_level(Beginner/Intermediate/Advanced)",
-      "path": "/algorithms/{algorithm}",
-      "externalUrl": null,
-      "practiceProblems":[list_of_all_the_practiceProblems.id]
-   }} </metadata>
+        Make sure the JSON is valid and well-formatted with double quotes, no trailing commas.
 
-Make sure the JSON is valid and well-formatted with double quotes, no trailing commas.
+        Now, generate the {algorithm} page with *the same quality, tone, and polish as the golden example*, including the metadata JSON as specified.
+    `
+})
 
-Now, generate the {algorithm} page with *the same quality, tone, and polish as the golden example*, including the metadata JSON as specified.
-"""
-)
+export default Prompt;

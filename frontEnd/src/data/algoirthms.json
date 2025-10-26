@@ -146,6 +146,20 @@
         "hackerrank-selection-sort",
         "geeksforgeeks-selection-sort"
       ]
+    },
+    {
+      "title": "Knight's Tour",
+      "slug": "knight-tour",
+      "description": "Step-by-step demo solving the Knight's Tour on a chessboard using Warnsdorff's rule.",
+      "category": "Backtracking-&-Graph",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/knight-tour",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-knight-probability",
+        "hackerrank-knightl",
+        "spoj-knight"
+      ]
     }
   ]
 }
