@@ -160,6 +160,34 @@
         "hackerrank-knightl",
         "spoj-knight"
       ]
+    },
+    {
+      "title": "Binary Search Tree",
+      "slug": "binary-search-tree",
+      "description": "Interactive, narrated BST walk-through with full insert/search animation and voice explanations for learning BST fundamentals.",
+      "category": "Tree Algorithms",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/binary-search-tree",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-validate-bst",
+        "hackerrank-insert-search",
+        "codeforces-substitution"
+      ]
+    },
+    {
+      "title": "BST Insertion",
+      "slug": "bst-insertion",
+      "description": "Interactive guide to inserting values into Binary Search Trees, with animated walkthroughs and voice narration.",
+      "category": "algorithm",
+      "difficulty": "Intermediate",
+      "path": "/algorithms/bst-insertion",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-insert-into-bst",
+        "hackerrank-bst-lowest-common-ancestor",
+        "codeforces-bst-size"
+      ]
     }
   ]
 }
