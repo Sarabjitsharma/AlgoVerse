@@ -25,10 +25,9 @@ app.get('/health', (req, res) => {
 });
 
 async function invokeLLM(promptTemplate, input) {
-    // Format the prompt using the template
+
     const formattedPrompt = await promptTemplate.format(input);
-    
-    // Invoke the LLM with the formatted string
+
     const response = await llm.invoke(formattedPrompt);
     return response.content; 
 }
