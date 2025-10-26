@@ -10,7 +10,7 @@ import helpers from './utils/helpers.js';
 const app = express();
 
 app.use(cors({
-    origin: ["http://localhost:5174", "http://localhost:5173"],
+    origin: ["*"],
     credentials: true
 }));
 
@@ -57,7 +57,9 @@ app.post('/make', async (req, res) => {
     }
 });
 
-const PORT = 8000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// const PORT = 8000;
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });
+
+export default app;
