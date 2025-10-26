@@ -6,8 +6,33 @@ import bodyParser from 'body-parser';
 import Prompt from './utils/prompt.js';
 import llm from './model/llm.js';
 import helpers from './utils/helpers.js';
+import User from './models/User.js';
 
 const app = express();
+
+// import mongoose from 'mongoose';
+import connectDB from './config/db.js';
+
+connectDB();
+
+app.get('/add-test-user', async (req, res) => {
+  try {
+    const user = await User.create({ clerkId: 'test123', name: 'Test User', email: 'test@example.com' });
+    console.log('Test user added:', user);
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+
+// mongoose.connection.on('connected', () => {
+//   console.log('✅ MongoDB is connected!');
+// });
+
+// mongoose.connection.on('error', (err) => {
+//   console.error('❌ MongoDB connection error:', err);
+// });
 
 app.use(cors({
     origin: ["*"],
@@ -57,9 +82,9 @@ app.post('/make', async (req, res) => {
     }
 });
 
-// const PORT = 8000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
+const PORT = 8000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
-export default app;
+// export default app;

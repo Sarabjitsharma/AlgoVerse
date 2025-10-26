@@ -4,7 +4,6 @@
   "description": "Backend for Algoverse",
   "main": "main.js",
   "type": "module",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +25,7 @@
     "export": "^0.1.337",
     "express": "^5.1.0",
     "langchain": "^1.0.1",
+    "mongoose": "^8.19.2",
     "nodemon": "^3.1.10"
   }
 }
