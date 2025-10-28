@@ -15,23 +15,23 @@ import connectDB from './config/db.js';
 
 connectDB();
 
-app.get('/add-test-user', async (req, res) => {
-  try {
-    const user = await User.create({ clerkId: 'test123', name: 'Test User', email: 'test@example.com' });
-    console.log('Test user added:', user);
-    res.json({ success: true, user });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+// app.get('/add-test-user', async (req, res) => {
+//   try {
+//     const user = await User.create({ clerkId: 'test123', name: 'Test User', email: 'test@example.com' });
+//     console.log('Test user added:', user);
+//     res.json({ success: true, user });
+//   } catch (err) {
+//     res.status(500).json({ success: false, error: err.message });
+//   }
+// });
 
 
 // mongoose.connection.on('connected', () => {
-//   console.log('✅ MongoDB is connected!');
+//   console.log('MongoDB is connected!');
 // });
 
 // mongoose.connection.on('error', (err) => {
-//   console.error('❌ MongoDB connection error:', err);
+//   console.error('MongoDB connection error:', err);
 // });
 
 app.use(cors({
