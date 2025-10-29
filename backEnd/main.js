@@ -83,9 +83,9 @@ app.post('/make', async (req, res) => {
     }
 });
 
-// const PORT = 8000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
-export const handler = serverless(app);
+const PORT = process.env.PORT ;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+// export const handler = serverless(app);
 // export default app;
