@@ -7,11 +7,12 @@ import Prompt from './utils/prompt.js';
 import llm from './model/llm.js';
 import helpers from './utils/helpers.js';
 import User from './models/User.js';
+import serverless from 'serverless-http';
+import connectDB from './config/db.js';
+// import mongoose from 'mongoose';
 
 const app = express();
 
-// import mongoose from 'mongoose';
-import connectDB from './config/db.js';
 
 connectDB();
 
@@ -82,9 +83,9 @@ app.post('/make', async (req, res) => {
     }
 });
 
-const PORT = 8000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
+// const PORT = 8000;
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });
+export const handler = serverless(app);
 // export default app;
