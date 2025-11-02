@@ -160,6 +160,34 @@
         "hackerrank-knightl",
         "spoj-knight"
       ]
+    },
+    {
+      "title": "Binary Search Algorithm",
+      "slug": "binary-search",
+      "description": "Interactive binary search visualizer with voice narration, code playground, and practice problems",
+      "category": "Searching Algorithms",
+      "difficulty": "Beginner",
+      "path": "/algorithms/binary-search",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-binary-search",
+        "hackerrank-icecream-parlor",
+        "codeforces-interesting-drink"
+      ]
+    },
+    {
+      "title": "BFS of Tree",
+      "slug": "bfs-of-tree",
+      "description": "Interactive visualization of breadth-first search (BFS) for binary trees with step-by-step traversal and voice narration",
+      "category": "Tree Algorithms",
+      "difficulty": "Beginner",
+      "path": "/algorithms/bfs-of-tree",
+      "externalUrl": null,
+      "practiceProblems": [
+        "leetcode-binary-tree-level-order-traversal",
+        "leetcode-average-of-levels",
+        "leetcode-binary-tree-zigzag"
+      ]
     }
   ]
 }
