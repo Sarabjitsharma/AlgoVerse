@@ -21,7 +21,7 @@ export default function SideChatButton() {
     // console.log(user_id);
     const algo = { "Algo_name": inp, "userID":user_id};
     // console.log(algo);
-    const response = await fetch('http://127.0.0.1:8000/make', {
+    const response = await fetch('https://algo-verse-7sci.vercel.app/make', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
