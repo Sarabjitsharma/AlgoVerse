@@ -1,10 +1,15 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const algorithmSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String },
-  createdBy: { type: String, required: true }, // Clerk userId
-  createdAt: { type: Date, default: Date.now },
+  title: { type: String, required: true },
+  description: { type: String,required :true },
+  category : { type: String,required :true },
+  difficulty : { type: String,required :true }, 
+  slug : {type:String,required:true},
+  code : {type:String,required:true}
+
 });
 
-module.exports = mongoose.model("Algorithm", algorithmSchema);
+const Algorithms = mongoose.model("Algorithm", algorithmSchema);
+export default Algorithms;

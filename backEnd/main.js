@@ -11,7 +11,8 @@ import serverless from 'serverless-http';
 import connectDB from './config/db.js';
 import mongoose from 'mongoose';
 import CodeModel from './models/CodeModel.js';
-
+import Algorithms from './models/Algorithm.js';
+import crypto from 'crypto'
 
 const app = express();
 app.use(express.json());
@@ -95,36 +96,43 @@ async function invokeLLM(promptTemplate, input) {
 }
 
 app.post('/make', async (req, res) => {
-    try {
-        const { Algo_name } = req.body;
-        if (!Algo_name) return res.status(400).send("Algo_name is required");
+  try {
+    const { Algo_name, userID } = req.body;
 
-        const input = { algorithm: Algo_name };
-        const code = await invokeLLM(Prompt, input);
+    if (!Algo_name) return res.status(400).send("Algo_name is required");
+    if (!userID) return res.status(400).send("userID is required");
 
-        const metadata = helpers.extractMetadata(code);
+    const input = { algorithm: Algo_name };
+    const code = await invokeLLM(Prompt, input);
 
-        await helpers.addMetadataToJson(metadata);
+    const metadata = helpers.extractMetadata(code);
+    await helpers.addMetadataToJson(metadata);
+    const cleanedCode = helpers.cleanOutput(code);
 
-        const cleanedCode = helpers.cleanOutput(code);
+    // Save the new Algorithm
+    const doc = new Algorithms({
+      title: metadata.title,
+      description: metadata.description,
+      category: metadata.category,
+      difficulty: metadata.difficulty,
+      slug: metadata.slug,
+      code: cleanedCode.toString(),
+    });
 
-        const doc = new CodeModel({
-            name: Algo_name,
-            jsx: cleanedCode,
-            metadata: metadata
-        });
+    await doc.save();
 
-        await doc.save();
+    // Append to User
+    const update_algo_to_user = await User.findByIdAndUpdate(
+      userID,
+      { $addToSet: { Algo_id: doc._id } },
+      { new: true }
+    );
 
-        // const fileName = `${Algo_name}.jsx`;
-        // const filePath = path.join(process.cwd(), '../frontEnd/src/algorithms', fileName);
-        // fs.writeFileSync(filePath, cleanedCode, 'utf-8');
-
-        res.json({ success: true, id: doc._id, metadata: metadata });
-    } catch (err) {
-        console.error('Error in /make endpoint:', err);
-        res.status(500).json({ error: 'Something went wrong', details: err.message });
-    }
+    res.json({ success: true, id: doc._id, metadata, user: update_algo_to_user });
+  } catch (err) {
+    console.error("Error in /make endpoint:", err);
+    res.status(500).json({ error: "Something went wrong", details: err.message });
+  }
 });
 
 const PORT = process.env.PORT || 8000;
