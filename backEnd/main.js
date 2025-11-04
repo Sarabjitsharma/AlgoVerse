@@ -13,6 +13,7 @@ import mongoose from 'mongoose';
 import CodeModel from './models/CodeModel.js';
 import Algorithms from './models/Algorithm.js';
 import crypto from 'crypto'
+import {ObjectId} from 'mongodb'
 
 const app = express();
 app.use(express.json());
@@ -59,7 +60,7 @@ app.get("/get-jsx/:id", async (req, res) => {
 
 // app.get('/add-test-user', async (req, res) => {
 //   try {
-//     const user = await User.create({ clerkId: 'test123', name: 'Test User', email: 'test@example.com' });
+//     const user = await User.create({ clerkId: "user_350Cs6ZWN42Oa2yW4i9e9kpAv2h", name: 'unknown', Algo_id: [] });
 //     console.log('Test user added:', user);
 //     res.json({ success: true, user });
 //   } catch (err) {
@@ -122,11 +123,11 @@ app.post('/make', async (req, res) => {
     await doc.save();
 
     // Append to User
-    const update_algo_to_user = await User.findByIdAndUpdate(
-      userID,
-      { $addToSet: { Algo_id: doc._id } },
-      { new: true }
-    );
+    const update_algo_to_user = await User.findOneAndUpdate(
+        { clerkId: userID },               
+        { $addToSet: { Algo_id: doc._id } }, 
+        { new: true } 
+        );
 
     res.json({ success: true, id: doc._id, metadata, user: update_algo_to_user });
   } catch (err) {
