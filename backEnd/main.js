@@ -18,7 +18,7 @@ import {ObjectId} from 'mongodb'
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: ["*", "http://localhost:5173"],
+    origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
     credentials: true
 }));
 
