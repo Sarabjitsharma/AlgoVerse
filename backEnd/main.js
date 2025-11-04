@@ -107,7 +107,7 @@ app.post('/make', async (req, res) => {
     const code = await invokeLLM(Prompt, input);
 
     const metadata = helpers.extractMetadata(code);
-    await helpers.addMetadataToJson(metadata);
+    // await helpers.addMetadataToJson(metadata);
     const cleanedCode = helpers.cleanOutput(code);
 
     // Save the new Algorithm
