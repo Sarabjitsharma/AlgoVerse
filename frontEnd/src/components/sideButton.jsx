@@ -17,7 +17,7 @@ export default function SideChatButton() {
   };
 
   const apiCall = async (inp) => {
-    const user_id = user?.username || "unable to fetch";
+    const user_id = user?.id || "unable to fetch";
     // console.log(user_id);
     const algo = { "Algo_name": inp, "userID":user_id};
     // console.log(algo);
