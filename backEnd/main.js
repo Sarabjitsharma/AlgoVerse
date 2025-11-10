@@ -11,12 +11,14 @@ import serverless from 'serverless-http';
 import connectDB from './config/db.js';
 import mongoose from 'mongoose';
 import CodeModel from './models/CodeModel.js';
-
+import Algorithms from './models/Algorithm.js';
+import crypto from 'crypto'
+import {ObjectId} from 'mongodb'
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: ["*", "http://localhost:5173"],
+    origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
     credentials: true
 }));
 
@@ -58,7 +60,7 @@ app.get("/get-jsx/:id", async (req, res) => {
 
 // app.get('/add-test-user', async (req, res) => {
 //   try {
-//     const user = await User.create({ clerkId: 'test123', name: 'Test User', email: 'test@example.com' });
+//     const user = await User.create({ clerkId: "user_350Cs6ZWN42Oa2yW4i9e9kpAv2h", name: 'unknown', Algo_id: [] });
 //     console.log('Test user added:', user);
 //     res.json({ success: true, user });
 //   } catch (err) {
@@ -95,37 +97,90 @@ async function invokeLLM(promptTemplate, input) {
 }
 
 app.post('/make', async (req, res) => {
-    try {
-        const { Algo_name } = req.body;
-        if (!Algo_name) return res.status(400).send("Algo_name is required");
+  try {
+    const { Algo_name, userID } = req.body;
 
-        const input = { algorithm: Algo_name };
-        const code = await invokeLLM(Prompt, input);
+    if (!Algo_name) return res.status(400).send("Algo_name is required");
+    if (!userID) return res.status(400).send("userID is required");
 
-        const metadata = helpers.extractMetadata(code);
+    const input = { algorithm: Algo_name };
+    const code = await invokeLLM(Prompt, input);
 
-        await helpers.addMetadataToJson(metadata);
+    const metadata = helpers.extractMetadata(code);
+    // await helpers.addMetadataToJson(metadata);
+    const cleanedCode = helpers.cleanOutput(code);
 
-        const cleanedCode = helpers.cleanOutput(code);
+    // Save the new Algorithm
+    const doc = new Algorithms({
+      title: metadata.title,
+      description: metadata.description,
+      category: metadata.category,
+      difficulty: metadata.difficulty,
+      slug: metadata.slug,
+      code: cleanedCode.toString(),
+    });
 
-        const doc = new CodeModel({
-            name: Algo_name,
-            jsx: cleanedCode,
-            metadata: metadata
-        });
+    await doc.save();
 
-        await doc.save();
+    // Append to User
+    const update_algo_to_user = await User.findOneAndUpdate(
+        { clerkId: userID },               
+        { $addToSet: { Algo_id: doc._id } }, 
+        { new: true } 
+        );
 
-        // const fileName = `${Algo_name}.jsx`;
-        // const filePath = path.join(process.cwd(), '../frontEnd/src/algorithms', fileName);
-        // fs.writeFileSync(filePath, cleanedCode, 'utf-8');
-
-        res.json({ success: true, id: doc._id, metadata: metadata });
-    } catch (err) {
-        console.error('Error in /make endpoint:', err);
-        res.status(500).json({ error: 'Something went wrong', details: err.message });
-    }
+    res.json({ success: true, id: doc._id, metadata, user: update_algo_to_user });
+  } catch (err) {
+    console.error("Error in /make endpoint:", err);
+    res.status(500).json({ error: "Something went wrong", details: err.message });
+  }
 });
+
+
+app.post("/sync-user", async (req, res) => {
+  try {
+    const { clerkId, name } = req.body;
+
+    if (!clerkId) return res.status(400).json({ error: "clerkId is required" });
+
+    let user = await User.findOne({ clerkId });
+
+    if (!user) {
+      user = new User({ clerkId, name: name || "Unknown", Algo_id: [] });
+      await user.save();
+    }
+
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error("Error in /sync-user:", err);
+    res.status(500).json({ error: "Something went wrong", details: err.message });
+  }
+});
+
+
+app.get("/get-algo/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const algo = await Algorithms.findById(id);
+
+    if (!algo) return res.status(404).json({ error: "Algorithm not found" });
+
+    res.json({
+      title: algo.title,
+      description: algo.description,
+      code: algo.code,
+      metadata: {
+        category: algo.category,
+        difficulty: algo.difficulty,
+        slug: algo.slug,
+      },
+    });
+  } catch (err) {
+    console.error("Error in /get-algo:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

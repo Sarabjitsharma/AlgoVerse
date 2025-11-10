@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
 
 export default function SideChatButton() {
+  const { user } = useUser();
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -15,8 +17,11 @@ export default function SideChatButton() {
   };
 
   const apiCall = async (inp) => {
-    const algo = { "Algo_name": inp };
-    const response = await fetch('http://127.0.0.1:8000/make', {
+    const user_id = user?.id || "unable to fetch";
+    // console.log(user_id);
+    const algo = { "Algo_name": inp, "userID":user_id};
+    // console.log(algo);
+    const response = await fetch('https://algo-verse-7sci.vercel.app/make', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -36,7 +41,7 @@ export default function SideChatButton() {
         timestamp: new Date()
       };
       setMessages([...messages, newMessage]);
-      
+
       // Simulate bot response
       try {
         const algoName = inputValue.trim().toLowerCase().replace(/\s+/g, '-');
