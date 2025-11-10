@@ -1,10 +1,12 @@
 import articlesData from '../data/algoirthms.json';
 import "./style.css"
-import { useState } from 'react';
 import { useUser } from "@clerk/clerk-react";
+import { useState, useEffect } from 'react';
 
 const ArticleGrid = () => {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const user_id = user?.id || "not logged in";
+  const [Articles, setArticles] = useState([]);
   const isAdmin = user?.publicMetadata?.isAdmin || false;
 
   const [category, setCategory] = useState('All');
@@ -22,6 +24,43 @@ const ArticleGrid = () => {
       ])
     ).values()
   );
+
+  useEffect(() => {
+    // debug logs (remove later)
+    // console.log('useEffect fired', { isLoaded, isSignedIn, user_id });
+    if (isLoaded && isSignedIn && user_id !== "not logged in") {
+      (async () => {
+        const data = await getArticles(user_id);
+        console.log("Fetched user algorithms:", data);
+
+        if (data && data.success && Array.isArray(data.data)) {
+          setArticles(data.data);  // ✅ store the actual array, not the wrapper object
+        } else {
+          setArticles([]);
+        }
+      })();
+    } else if (isLoaded && !isSignedIn) {
+      setArticles([]); // clear if logged out
+    }
+  }, [isLoaded, isSignedIn, user_id]);
+
+  // Backend API call
+  const getArticles = async (userID) => {
+    try {
+      const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userID }), // ✅ change userID → id
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const res = await response.json();
+      return res;
+    } catch (err) {
+      console.error("Error fetching algorithms:", err);
+      return { success: false, algorithms: [] };
+    }
+  };
 
   // Filter articles by selected category
   const filteredArticles = category === 'All'
@@ -41,7 +80,7 @@ const ArticleGrid = () => {
 
   return (
     <div className="container">
-      <h2 className="section-title">Algorithm</h2>
+      <h2 className="section-title">My Algorithms</h2>
 
       {/* Category dropdown */}
       <div className="category-filter">
@@ -53,68 +92,84 @@ const ArticleGrid = () => {
           value={category}
           onChange={(e) => {
             setCategory(e.target.value);
-            setCurrentPage(1); // reset to first page on change
+            setCurrentPage(1);
           }}
           className="category-dropdown"
         >
           <option value="All">All</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
+          {Array.from(new Set(Articles.map(a => a.category || "Uncategorized"))).map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
       </div>
-      
-      
+
+      {/* Articles Grid */}
       <div className="articles-grid">
-        {paginatedArticles.map(article => (
-          <a
-            key={article._id}
-            href={article.externalUrl || article.path || `/pages/${article.slug}.html`}
-            className="article-card-link"
-            target={article.externalUrl ? "_blank" : "_self"}
-            rel={article.externalUrl ? "noopener noreferrer" : undefined}
-          >
-            <div className="article-card">
-              <div className="article-tag">{article.category}</div>
-              <h3 className="article-title">{article.title}</h3>
-              <p className="article-description">{article.description}</p>
+        {Articles && Articles.length > 0 ? (
+          Articles
+            .filter(article =>
+              category === "All" ? true :
+                (article.category || "").toLowerCase() === category.toLowerCase()
+            )
+            .slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage)
+            .map((article) => (
+              <a
+                key={article._id}
+                href={`/algo/${article._id}`}
+                className="article-card-link"
+              >
+                <div className="article-card">
+                  <div className="article-tag">{article.category || "Uncategorized"}</div>
+                  <h3 className="article-title">{article.title}</h3>
+                  <p className="article-description">{article.description}</p>
 
-              <div className="article-meta">
-                {article.readTime > 0 && <span className="read-time">{article.readTime} min read</span>}
-                <span className={`difficulty ${article.difficulty.toLowerCase()}`}>{article.difficulty}</span>
-                {article.externalUrl && <span className="external-indicator">🔗 External</span>}
-              </div>
+                  <div className="article-meta">
+                    {article.difficulty && (
+                      <span className={`difficulty ${article.difficulty.toLowerCase()}`}>
+                        {article.difficulty}
+                      </span>
+                    )}
+                  </div>
 
-              {article.isVerified && <span className="human-verified-badge">✅ Human Verified</span>}
+                  {article.isVerified && (
+                    <span className="human-verified-badge">✅ Human Verified</span>
+                  )}
 
-              {isAdmin && (
-                <label>
-                  Verify this article &nbsp;
-                  <input type="checkbox" />
-                </label>
-              )}
-            </div>
-          </a>
-        ))}
+                  {isAdmin && (
+                    <label>
+                      Verify this algorithm &nbsp;
+                      <input type="checkbox" />
+                    </label>
+                  )}
+                </div>
+              </a>
+            ))
+        ) : (
+          <p className="text-gray-500 text-center mt-6">
+            {isSignedIn
+              ? "No algorithms found for this user."
+              : "Please sign in to see your algorithms."}
+          </p>
+        )}
       </div>
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
+      {/* ✅ Fixed Pagination */}
+      {Articles && Articles.length > articlesPerPage && (
         <div className="pagination">
           <button
             className="pagination-btn"
-            onClick={() => goToPage(currentPage - 1)}
+            onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
             Previous
           </button>
-          <span className="pagination-info"> Page {currentPage} of {totalPages} </span>
+          <span className="pagination-info">
+            Page {currentPage} of {Math.ceil(Articles.length / articlesPerPage)}
+          </span>
           <button
             className="pagination-btn"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage >= Math.ceil(Articles.length / articlesPerPage)}
           >
             Next
           </button>

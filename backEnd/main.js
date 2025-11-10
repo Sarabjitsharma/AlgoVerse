@@ -183,28 +183,59 @@ app.get("/get-algo/:id", async (req, res) => {
 
 
 app.post("/get_algorithms", async (req, res) => {
-    try {
-        const { id } = req.body;
-        const userdet = await User.findOne({ clerkId: id });
+  try {
+    // Frontend sends { id: userID }
+    const { id } = req.body;
 
-        if (!userdet) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        const algoIds = userdet.Algo_id;
-        const algos = await Algorithms.find(
-            { _id: { $in: algoIds } },
-            { code: 0 }
-            );
-
-
-        res.json({
-            data: algos
-        });
-    } catch (err) {
-        res.status(500).json({ error: "Server error", details: err.message });
+    // Check if ID is present
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing user ID in request body",
+      });
     }
+
+    // Find the user in the database
+    const userdet = await User.findOne({ clerkId: id });
+
+    if (!userdet) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    // Get algorithms linked to this user
+    const algoIds = userdet.Algo_id || [];
+    if (algoIds.length === 0) {
+      return res.json({
+        success: true,
+        data: [],
+        message: "No algorithms found for this user",
+      });
+    }
+
+    // Fetch algorithm metadata (exclude heavy code)
+    const algos = await Algorithms.find(
+      { _id: { $in: algoIds } },
+      { code: 0 }
+    );
+
+    // Respond with clean structure
+    res.json({
+      success: true,
+      data: algos,
+    });
+  } catch (err) {
+    console.error("Error in /get_algorithms:", err);
+    res.status(500).json({
+      success: false,
+      error: "Server error",
+      details: err.message,
+    });
+  }
 });
+
 
 
 

@@ -19,7 +19,7 @@ export default function SideChatButton() {
   const apiCall = async (inp) => {
     const user_id = user?.id || "unable to fetch";
     // console.log(user_id);
-    const algo = { "Algo_name": inp, "userID":user_id};
+    const algo = { "Algo_name": inp, "userID": user_id };
     // console.log(algo);
     const response = await fetch('https://algo-verse-7sci.vercel.app/make', {
       method: 'POST',
@@ -28,11 +28,11 @@ export default function SideChatButton() {
       },
       body: JSON.stringify(algo)
     });
-    const res =await response.json();
+    const res = await response.json();
     return res;
   };
-  const sendMessage = async () => {
-    // e.target.value=''
+  const sendMessage = async (e) => {
+    e.preventDefault(); // also prevents form reloads if triggered by Enter key
     if (inputValue.trim()) {
       const newMessage = {
         id: messages.length + 1,
@@ -41,26 +41,23 @@ export default function SideChatButton() {
         timestamp: new Date()
       };
       setMessages([...messages, newMessage]);
+      setInputValue(''); // ✅ clear the input immediately
 
-        // Simulate bot response
-  try {
-          const resData = await apiCall(inputValue); // get the response immediately
-
-          const newBotMessage = {
-            text: `Your ${inputValue} page has been created`,
-            sender: "bot",
-            timestamp: new Date()
+      try {
+        const resData = await apiCall(inputValue); // call API with current input
+        const newBotMessage = {
+          text: `Your ${inputValue} page has been created`,
+          sender: "bot",
+          timestamp: new Date()
         };
         setTimeout(() => {
           setMessages(prev => [...prev, newBotMessage]);
         }, 1000);
 
         if (resData?.id) {
-          navigate(`/algo/${ resData.id }`);
+          navigate(`/algo/${resData.id}`);
         }
-      }
-        catch (e) {
-        setInputValue('');
+      } catch (e) {
         const errorMessage = {
           text: `Failed to create ${inputValue} page.`,
           sender: "bot",
@@ -68,12 +65,13 @@ export default function SideChatButton() {
         };
         setMessages(prevMessages => [...prevMessages, errorMessage]);
       }
-      }
-    };
+    }
+  };
+
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      sendMessage();
+      sendMessage(e);
     }
   };
 
@@ -124,7 +122,7 @@ export default function SideChatButton() {
                 onChange={(e) => { setInputValue(e.target.value); }}
                 onKeyDown={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="text-black flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
               <button
                 onClick={sendMessage}
