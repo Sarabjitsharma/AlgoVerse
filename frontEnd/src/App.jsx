@@ -3,6 +3,7 @@ import Header from "./components/Header.jsx";
 import Main from "./components/Main.jsx";
 import SideChatButton from "./components/sideButton.jsx";
 import RenderPage from './components/RenderPage.jsx';
+import LiveAlgo  from './components/LiveAlgo.jsx';
 
 // const pages = import.meta.glob("./algorithms/*.jsx");
 
@@ -25,11 +26,12 @@ export default function App() {
         <>
             <BrowserRouter>
                 <Header />
-                <main>
+                <main>  
                     <Routes>
-                        <Route path="/" element={<Main />} />
                         {/* <Route path="/algorithms/:algoName" element={<AlgoLoader />} /> */}
-                        <Route path="/render/:id" element={<RenderPage />} />
+                        {/* <Route path="/render/:id" element={<RenderPage />} /> */}
+                        <Route path="/" element={<Main />} />
+                        <Route path="/algo/:id" element={<LiveAlgo />} />
                     </Routes>
                 </main>
                 <SideChatButton />

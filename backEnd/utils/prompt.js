@@ -738,9 +738,8 @@ const BinarySearch = () => {
   );
 };
 
-export default BinarySearch;
+render(<BinarySearch />);
 `
-
 
 const Prompt = new PromptTemplate({
     inputVariables:['algorithm'],
@@ -772,6 +771,7 @@ const Prompt = new PromptTemplate({
         - Include fade-in header, animated visualization, narrated explanations, and tips section.
         - Must be a **self-contained .jsx file** — no external files.
         - All accessibility rules from golden example (aria-labels, keyboard navigable) must be included.
+        - Use render(<function_name />) instead of export default
 
         ## Output Structure
         1. <code-file name="{algorithm}.jsx"> — JSX code here — </code-file>

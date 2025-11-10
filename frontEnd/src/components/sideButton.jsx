@@ -28,8 +28,8 @@ export default function SideChatButton() {
       },
       body: JSON.stringify(algo)
     });
-    const res = await response.json();
-    console.log(res);
+    const res =await response.json();
+    return res;
   };
   const sendMessage = async () => {
     // e.target.value=''
@@ -42,24 +42,24 @@ export default function SideChatButton() {
       };
       setMessages([...messages, newMessage]);
 
-      // Simulate bot response
-      try {
-        const algoName = inputValue.trim().toLowerCase().replace(/\s+/g, '-');
-        setInputValue('');
-        console.log(algoName);
-        await apiCall(algoName);
-        
-        const newBotMessage = {
-          text: `Your ${inputValue} page has been created`,
-          sender: "bot",
-          timestamp: new Date()
+        // Simulate bot response
+  try {
+          const resData = await apiCall(inputValue); // get the response immediately
+
+          const newBotMessage = {
+            text: `Your ${inputValue} page has been created`,
+            sender: "bot",
+            timestamp: new Date()
         };
         setTimeout(() => {
-          setMessages(prevMessages => [...prevMessages, newBotMessage]);
+          setMessages(prev => [...prev, newBotMessage]);
         }, 1000);
-        navigate(`/algorithms/${algoName}`)
+
+        if (resData?.id) {
+          navigate(`/algo/${ resData.id }`);
+        }
       }
-      catch (e) {
+        catch (e) {
         setInputValue('');
         const errorMessage = {
           text: `Failed to create ${inputValue} page.`,
@@ -68,8 +68,8 @@ export default function SideChatButton() {
         };
         setMessages(prevMessages => [...prevMessages, errorMessage]);
       }
-    }
-  };
+      }
+    };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
