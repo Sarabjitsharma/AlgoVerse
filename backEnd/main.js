@@ -182,6 +182,32 @@ app.get("/get-algo/:id", async (req, res) => {
 });
 
 
+app.post("/get_algorithms", async (req, res) => {
+    try {
+        const { id } = req.body;
+        const userdet = await User.findOne({ clerkId: id });
+
+        if (!userdet) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const algoIds = userdet.Algo_id;
+        const algos = await Algorithms.find(
+            { _id: { $in: algoIds } },
+            { code: 0 }
+            );
+
+
+        res.json({
+            data: algos
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Server error", details: err.message });
+    }
+});
+
+
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
