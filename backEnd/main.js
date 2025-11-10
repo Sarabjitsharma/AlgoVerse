@@ -136,6 +136,52 @@ app.post('/make', async (req, res) => {
   }
 });
 
+
+app.post("/sync-user", async (req, res) => {
+  try {
+    const { clerkId, name } = req.body;
+
+    if (!clerkId) return res.status(400).json({ error: "clerkId is required" });
+
+    let user = await User.findOne({ clerkId });
+
+    if (!user) {
+      user = new User({ clerkId, name: name || "Unknown", Algo_id: [] });
+      await user.save();
+    }
+
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error("Error in /sync-user:", err);
+    res.status(500).json({ error: "Something went wrong", details: err.message });
+  }
+});
+
+
+app.get("/get-algo/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const algo = await Algorithms.findById(id);
+
+    if (!algo) return res.status(404).json({ error: "Algorithm not found" });
+
+    res.json({
+      title: algo.title,
+      description: algo.description,
+      code: algo.code,
+      metadata: {
+        category: algo.category,
+        difficulty: algo.difficulty,
+        slug: algo.slug,
+      },
+    });
+  } catch (err) {
+    console.error("Error in /get-algo:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

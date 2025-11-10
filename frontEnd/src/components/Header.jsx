@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 
+
+
 export default function Header() {
   const [darkMode, setDarkMode] = useState(false);
+  const { isLoaded, isSignedIn, user } = useUser();
 
   // ✅ Load theme from localStorage on mount
   useEffect(() => {
@@ -17,6 +20,23 @@ export default function Header() {
       document.documentElement.classList.remove("dark");
     }
   }, []);
+
+  useEffect(() => {
+  if (isLoaded && isSignedIn && user) {
+    fetch("https://algo-verse-7sci.vercel.app/sync-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clerkId: user.id,
+        name: user.username || user.first_name || "Unknown",
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log("Synced user:", data.user))
+      .catch((err) => console.error("Sync error:", err));
+  }
+}, [isLoaded, isSignedIn, user]);
+
 
   // ✅ Toggle and save theme
   const toggleDarkMode = () => {
