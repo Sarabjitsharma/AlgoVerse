@@ -10,7 +10,6 @@ import User from './models/User.js';
 import serverless from 'serverless-http';
 import connectDB from './config/db.js';
 import mongoose from 'mongoose';
-import CodeModel from './models/CodeModel.js';
 import Algorithms from './models/Algorithm.js';
 import crypto from 'crypto'
 import {ObjectId} from 'mongodb'
@@ -25,24 +24,6 @@ app.use(cors({
 connectDB();
 
 // ✅ POST route to upload JSX
-app.post('/upload-jsx', async (req, res) => {
-    try {
-        const { name, jsx } = req.body;
-
-        if (!name || !jsx) {
-            return res.status(400).json({ error: 'Name and JSX are required' });
-        }
-
-        const doc = new CodeModel({ name, jsx });
-        await doc.save();
-
-        res.json({ success: true, id: doc._id });
-    } catch (err) {
-        console.error('Upload Error:', err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
 app.get("/get-jsx/:id", async (req, res) => {
     try {
         const { id } = req.params;
