@@ -23,21 +23,6 @@ app.use(cors({
 
 connectDB();
 
-// ✅ POST route to upload JSX
-app.get("/get-jsx/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const doc = await CodeModel.findById(id);
-
-        if (!doc) {
-            return res.status(404).json({ error: "Not found" });
-        }
-
-        res.json({ name: doc.name, jsx: doc.jsx });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 // app.get('/add-test-user', async (req, res) => {
 //   try {
@@ -196,13 +181,12 @@ app.post("/get_algorithms", async (req, res) => {
       });
     }
 
-    // Fetch algorithm metadata (exclude heavy code)
+    // Fetch algorithm metadata (exclude code)
     const algos = await Algorithms.find(
       { _id: { $in: algoIds } },
       { code: 0 }
     );
 
-    // Respond with clean structure
     res.json({
       success: true,
       data: algos,
