@@ -1,6 +1,8 @@
 import "./style.css"
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from 'react';
+import BlurText from './BlurText';
+import AnimatedContent from './AnimatedContent.jsx';
 
 const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
 
@@ -160,9 +162,19 @@ export default function Main() {
 
   return (
     <main>
+      <AnimatedContent >
       <section className="hero">
         <div className="container">
-          <h1>DSA Learning Hub</h1>
+          <h1 className="flex justify-center">
+            <BlurText
+              text="DSA Learning Hub"
+              delay={150}
+              animateBy="words"
+              direction="top"
+              onAnimationComplete={() => console.log("Animation Complete!")}
+              className="text-6xl"
+            />
+          </h1>
           <p className="hero-subtitle">Master Data Structures & Algorithms</p>
 
           <div className="hero-description">
@@ -205,7 +217,7 @@ export default function Main() {
           </div>
         </div>
       </section>
-
+      </AnimatedContent>
       <section className="articles-section" id="articles">
         {/* Pass the state and props down to ArticleGrid */}
         <ArticleGrid
