@@ -178,10 +178,8 @@ app.get("/get-algo/:id", async (req, res) => {
 
 app.post("/get_algorithms", async (req, res) => {
   try {
-    // Frontend sends { id: userID }
     const { id, admin } = req.body;
 
-    // Check if ID is present
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -189,12 +187,19 @@ app.post("/get_algorithms", async (req, res) => {
       });
     }
 
-    // Find the user in the database
     let userAlgos = [];
-    if(admin){
-      userAlgos = await Algorithms.find({}, { code: 0 });
+
+    // ADMIN GETS ALL ALGORITHMS
+    if (admin) {
+      const allAlgos = await Algorithms.find({}, { code: 0 });
+      return res.json({
+        success: true,
+        data: allAlgos,
+      });
     }
-    else if(id!=="guest"){
+
+    // USER LOGIC
+    if (id !== "guest") {
       const userdet = await User.findOne({ clerkId: id });
 
       if (!userdet) {
@@ -203,44 +208,34 @@ app.post("/get_algorithms", async (req, res) => {
           error: "User not found",
         });
       }
-      // Get algorithms linked to this user
-      const algoIds = userdet.Algo_id || [];
-      if (algoIds.length === 0) {
-        return res.json({
-          success: true,
-          data: [],
-          message: "No algorithms found for this user",
-        });
-      }
 
-      // Fetch algorithm metadata (exclude code)
+      const algoIds = userdet.Algo_id || [];
+
       userAlgos = await Algorithms.find(
         { _id: { $in: algoIds } },
         { code: 0 }
       );
     }
 
-    // get verified algos
-    let verifiedAlgos = [];
-    let algos = userAlgos;
-    if(!admin){
-      verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
-      algos = [...userAlgos, ...verifiedAlgos];
-    }
-    
-    res.json({
+    // VERIFIED ALGOS FOR USERS + GUEST
+    const verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
+    const algos = [...userAlgos, ...verifiedAlgos];
+
+    return res.json({
       success: true,
       data: algos,
     });
+
   } catch (err) {
     console.error("Error in /get_algorithms:", err);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: "Server error",
       details: err.message,
     });
   }
 });
+
 
 
 // POST route for Code Execution (Local JS + J-Doodle for others)
@@ -299,6 +294,20 @@ app.post('/api/execute', async (req, res) => {
   } catch (error) {
     console.error('Error calling J-Doodle:', error);
     res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+app.post('/verify-algo', async (req, res) => {
+  try {
+    const { algoId, isVerified } = req.body;
+    await Algorithms.findOneAndUpdate(
+      { _id: algoId },
+      { isVerified: isVerified }
+    );
+    res.json({ success: true, message: "Algorithm verification status updated." });
+  } catch (error) {
+    console.error("Error updating algorithm verification status:", error);
+    res.status(500).json({ success: false, error: "Internal server error." });
   }
 });
 

@@ -10,6 +10,27 @@ const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 6;
 
+  const handleVerify = async (algoId, isChecked) => {
+    try {
+      // const response = await fetch("https://algo-verse-7sci.vercel.app/verify-algo", {
+      const response = await fetch("http://127.0.0.1:8000/verify-algo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          algoId,
+          isVerified: isChecked,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Verification updated successfully");
+      }
+    } catch (err) {
+      console.error("Verification update failed:", err);
+    }
+  };
 
   return (
     <div className="container">
@@ -71,7 +92,13 @@ const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
                   {isAdmin && (
                     <label>
                       Verify this algorithm &nbsp;
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={article.isVerified}
+                        onChange={(e) =>
+                          handleVerify(article._id, e.target.checked)
+                        }
+                      />
                     </label>
                   )}
                 </div>
@@ -117,12 +144,12 @@ export default function Main() {
   const user_id = user?.id || "guest";
   const [Articles, setArticles] = useState([]);
   const isAdmin = user?.publicMetadata?.isAdmin || false;
-  
+
   // Backend API call
   const getArticles = async (userID, isAdmin) => {
     try {
-      const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
-      // const response = await fetch("http://127.0.0.1:8000/get_algorithms", {
+      // const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
+        const response = await fetch("http://127.0.0.1:8000/get_algorithms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userID, admin: isAdmin }),
