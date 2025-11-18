@@ -23,7 +23,8 @@ app.use(cors({
   origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
   credentials: true
 }));
-
+import { exec } from 'child_process'; // Import exec to run commands
+import os from 'os'; // Import os to find the temp directory
 connectDB();
 
 
@@ -179,7 +180,7 @@ app.post("/get_algorithms", async (req, res) => {
   try {
     // Frontend sends { id: userID }
     const { id, admin } = req.body;
-    
+
     // Check if ID is present
     if (!id) {
       return res.status(400).json({
@@ -187,7 +188,7 @@ app.post("/get_algorithms", async (req, res) => {
         error: "Missing user ID in request body",
       });
     }
-    
+
     // Find the user in the database
     let userAlgos = [];
     if(admin){
@@ -195,7 +196,7 @@ app.post("/get_algorithms", async (req, res) => {
     }
     else if(id!=="guest"){
       const userdet = await User.findOne({ clerkId: id });
-  
+
       if (!userdet) {
         return res.status(404).json({
           success: false,
@@ -242,9 +243,26 @@ app.post("/get_algorithms", async (req, res) => {
 });
 
 
-// POST route for J-Doodle code execution
+// POST route for Code Execution (Local JS + J-Doodle for others)
 app.post('/api/execute', async (req, res) => {
-  // 1. Get credentials from .env
+  const { language: lang, code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ error: 'No code provided.' });
+  }
+  console.log(lang);
+  // 1. Intercept JavaScript execution and run locally
+  if (lang === 'javascript') {
+    try {
+      const result = await helpers.executeJsLocally(code);
+      return res.json(result);
+    } catch (error) {
+      console.error('Local execution error:', error);
+      return res.status(500).json({ error: 'Internal server error during local execution.' });
+    }
+  }
+
+  // 2. For other languages (Python, C++), check credentials and use J-Doodle
   const JDOODLE_CLIENT_ID = process.env.JDOODLE_CLIENT_ID;
   const JDOODLE_CLIENT_SECRET = process.env.JDOODLE_CLIENT_SECRET;
 
@@ -253,19 +271,11 @@ app.post('/api/execute', async (req, res) => {
     return res.status(500).json({ error: 'Server configuration error.' });
   }
 
-  // 2. Get code from request body
-  const { language: lang, code } = req.body;
-
-  if (!code) {
-    return res.status(400).json({ error: 'No code provided.' });
-  }
-
   const langDetails = helpers.getJdoodleLanguage(lang);
   if (!langDetails) {
     return res.status(400).json({ error: 'Unsupported language.' });
   }
 
-  // 3. Prepare J-Doodle payload
   const payload = {
     clientId: JDOODLE_CLIENT_ID,
     clientSecret: JDOODLE_CLIENT_SECRET,
@@ -274,7 +284,6 @@ app.post('/api/execute', async (req, res) => {
     versionIndex: langDetails.versionIndex,
   };
 
-  // 4. Call J-Doodle API
   try {
     const jdoodleResponse = await fetch('https://api.jdoodle.com/v1/execute', {
       method: 'POST',
@@ -285,8 +294,6 @@ app.post('/api/execute', async (req, res) => {
     });
 
     const data = await jdoodleResponse.json();
-
-    // 5. Forward J-Doodle's response to the frontend
     res.status(jdoodleResponse.status).json(data);
 
   } catch (error) {

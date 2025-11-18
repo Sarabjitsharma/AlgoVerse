@@ -66,4 +66,39 @@ function getJdoodleLanguage(lang) {
   }
 }
 
-export default{ extractMetadata, addMetadataToJson, cleanOutput, getJdoodleLanguage};
+// Helper function to execute JS locally
+const executeJsLocally = (code) => {
+  return new Promise((resolve, reject) => {
+    // Create a temporary file in the system's temp directory
+    const fileName = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.js`;
+    const filePath = path.join(os.tmpdir(), fileName);
+
+    try {
+      fs.writeFileSync(filePath, code);
+
+      // Run the file with Node.js with a 5-second timeout
+      exec(`node "${filePath}"`, { timeout: 5000 }, (error, stdout, stderr) => {
+        // Clean up the temp file
+        try {
+          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        } catch (cleanupErr) {
+          console.error("Failed to delete temp file:", cleanupErr);
+        }
+
+        if (error) {
+          // Check for timeout
+          if (error.killed) {
+            resolve({ output: "Error: Time Limit Exceeded (5s)", statusCode: 408 });
+          } else {
+            resolve({ output: stderr || error.message, statusCode: 400 });
+          }
+        } else {
+          resolve({ output: stdout, statusCode: 200, memory: "local", cpuTime: "local" });
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+export default{ extractMetadata, addMetadataToJson, cleanOutput, getJdoodleLanguage, executeJsLocally};
