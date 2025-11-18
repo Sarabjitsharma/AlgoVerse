@@ -52,4 +52,18 @@ function cleanOutput(answer) {
     return extracted.replace(/\n{3,}/g, '\n\n');
 }
 
-export default{ extractMetadata, addMetadataToJson, cleanOutput };
+// Helper function to map your language names to J-Doodle's
+function getJdoodleLanguage(lang) {
+  switch (lang) {
+    case 'javascript':
+      return { language: 'nodejs', versionIndex: '4' }; // Node.js 18.15.0
+    case 'python':
+      return { language: 'python3', versionIndex: '4' }; // Python 3.9.9
+    case 'cpp':
+      return { language: 'cpp17', versionIndex: '1' }; // GCC 11.1.0
+    default:
+      return null;
+  }
+}
+
+export default{ extractMetadata, addMetadataToJson, cleanOutput, getJdoodleLanguage};

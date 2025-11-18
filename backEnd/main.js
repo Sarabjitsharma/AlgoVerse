@@ -14,6 +14,9 @@ import Algorithms from './models/Algorithm.js';
 import crypto from 'crypto'
 import {ObjectId} from 'mongodb'
 
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
@@ -203,6 +206,59 @@ app.post("/get_algorithms", async (req, res) => {
 
 
 
+
+// ✅ POST route for J-Doodle code execution
+app.post('/api/execute', async (req, res) => {
+  // 1. Get credentials from .env
+  const JDOODLE_CLIENT_ID = process.env.JDOODLE_CLIENT_ID;
+  const JDOODLE_CLIENT_SECRET = process.env.JDOODLE_CLIENT_SECRET;
+
+  if (!JDOODLE_CLIENT_ID || !JDOODLE_CLIENT_SECRET) {
+    console.error('J-Doodle credentials not found in .env file.');
+    return res.status(500).json({ error: 'Server configuration error.' });
+  }
+
+  // 2. Get code from request body
+  const { language: lang, code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ error: 'No code provided.' });
+  }
+
+  const langDetails = helpers.getJdoodleLanguage(lang);
+  if (!langDetails) {
+    return res.status(400).json({ error: 'Unsupported language.' });
+  }
+
+  // 3. Prepare J-Doodle payload
+  const payload = {
+    clientId: JDOODLE_CLIENT_ID,
+    clientSecret: JDOODLE_CLIENT_SECRET,
+    script: code,
+    language: langDetails.language,
+    versionIndex: langDetails.versionIndex,
+  };
+
+  // 4. Call J-Doodle API
+  try {
+    const jdoodleResponse = await fetch('https://api.jdoodle.com/v1/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await jdoodleResponse.json();
+
+    // 5. Forward J-Doodle's response to the frontend
+    res.status(jdoodleResponse.status).json(data);
+
+  } catch (error) {
+    console.error('Error calling J-Doodle:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
