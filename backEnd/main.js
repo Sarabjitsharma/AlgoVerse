@@ -254,7 +254,7 @@ app.post('/api/execute', async (req, res) => {
   // 1. Intercept JavaScript execution and run locally
   if (lang === 'javascript') {
     try {
-      const result = await executeJsLocally(code);
+      const result = await helpers.executeJsLocally(code);
       // Respond with the status code from the local execution result
       return res.status(result.statusCode || 200).json(result);
     } catch (error) {
