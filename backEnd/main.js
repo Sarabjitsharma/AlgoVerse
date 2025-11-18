@@ -23,8 +23,6 @@ app.use(cors({
   origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
   credentials: true
 }));
-import { exec } from 'child_process'; // Import exec to run commands
-import os from 'os'; // Import os to find the temp directory
 connectDB();
 
 
@@ -245,15 +243,18 @@ app.post('/api/execute', async (req, res) => {
   if (!code) {
     return res.status(400).json({ error: 'No code provided.' });
   }
-  console.log(lang);
+
   // 1. Intercept JavaScript execution and run locally
   if (lang === 'javascript') {
     try {
       const result = await helpers.executeJsLocally(code);
-      return res.json(result);
+      // Respond with the status code from the local execution result
+      return res.status(result.statusCode || 200).json(result);
     } catch (error) {
-      console.error('Local execution error:', error);
-      return res.status(500).json({ error: 'Internal server error during local execution.' });
+      // This catches setup errors from executeJsLocally (e.g., file write failure)
+      console.error('Local execution setup failed:', error.message);
+      // *** FIX: Return 500 with the specific error message to the frontend ***
+      return res.status(500).json({ error: `Internal server error during local execution: ${error.message}` });
     }
   }
 
