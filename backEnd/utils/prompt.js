@@ -795,4 +795,41 @@ const Prompt = new PromptTemplate({
     `
 })
 
-export default Prompt;
+const CheckerPrompt = new PromptTemplate({
+  inputVariables: ["algorithm_name", "mongodb_stored_algos"],
+  template: `
+You are an AI assistant that identifies whether a requested algorithm already exists.
+
+### REQUEST
+{algorithm_name}
+
+### EXISTING ALGORITHMS
+Each line is formatted as:
+ID:<id> | TITLE:<title> | DESC:<description> | SLUG:<slug>
+
+{mongodb_stored_algos}
+
+---
+
+### TASK
+Find if the requested algorithm matches any existing algorithm based on:
+- Title similarity
+- Meaning
+- Description similarity
+- Slug similarity
+
+---
+
+### STRICT OUTPUT FORMAT
+If a match is found, respond EXACTLY:
+FOUND:<id>
+
+Where <id> is the value from ID:<id> in the matched line.
+
+If no match exists, respond EXACTLY:
+NEW
+`
+});
+
+
+export { Prompt, CheckerPrompt };

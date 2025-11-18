@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import Prompt from './utils/prompt.js';
-import llm from './model/llm.js';
+import {Prompt,CheckerPrompt} from './utils/prompt.js';
+import {llm,checker} from './model/llm.js';
 import helpers from './utils/helpers.js';
 import User from './models/User.js';
 import serverless from 'serverless-http';
@@ -54,7 +54,7 @@ app.get('/health', (req, res) => {
     res.json({ status: 'healthy' });
 });
 
-async function invokeLLM(promptTemplate, input) {
+async function invokeLLM(promptTemplate, input,llm) {
 
     const formattedPrompt = await promptTemplate.format(input);
 
@@ -66,11 +66,34 @@ app.post('/make', async (req, res) => {
   try {
     const { Algo_name, userID } = req.body;
 
+    const algoDocs = await Algorithms.find().select("_id title description slug ");
+    const created_algo = algoDocs
+      .map(a => `ID:${a._id} | TITLE:${a.title} | DESC:${a.description} | SLUG:${a.slug}`)
+      .join("\n");
+
+    const check_input = {
+      algorithm_name: Algo_name,
+      mongodb_stored_algos: created_algo
+    };
+    const val = await invokeLLM(CheckerPrompt, check_input, llm);
+    console.log(val)
+    if(val.toUpperCase()!='NEW'){
+      const id = val.match(/FOUND:(.+)/)?.[1]?.trim();
+      const update_algo_to_user = await User.findOneAndUpdate(
+        { clerkId: userID },               
+        { $addToSet: { Algo_id: id } }, 
+        { new: true } 
+        );
+        
+    const metadata = await Algorithms.findById(id);
+        res.json({ success: true, id: id, metadata , user: update_algo_to_user });
+    }
+
     if (!Algo_name) return res.status(400).send("Algo_name is required");
     if (!userID) return res.status(400).send("userID is required");
 
     const input = { algorithm: Algo_name };
-    const code = await invokeLLM(Prompt, input);
+    const code = await invokeLLM(Prompt, input,llm);
 
     const metadata = helpers.extractMetadata(code);
     // await helpers.addMetadataToJson(metadata);
@@ -84,6 +107,7 @@ app.post('/make', async (req, res) => {
       difficulty: metadata.difficulty,
       slug: metadata.slug,
       code: cleanedCode.toString(),
+      practiceProblems: metadata.practiceProblems
     });
 
     await doc.save();
@@ -201,6 +225,16 @@ app.post("/get_algorithms", async (req, res) => {
   }
 });
 
+
+app.post("/get-admin-algos", async (req, res) => {
+  try {
+    const algos = await Algorithms.find({isVerified: true}, { code: 0 });
+    res.status(200).json({ success: true, algos });
+  } catch (err) {
+    console.error("Error in /get-admin-algos:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
 
 
 
