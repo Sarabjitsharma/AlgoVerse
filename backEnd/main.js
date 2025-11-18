@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import {Prompt,CheckerPrompt} from './utils/prompt.js';
+import { Prompt, CheckerPrompt } from './utils/prompt.js';
 import llm from './model/llm.js';
 import helpers from './utils/helpers.js';
 import User from './models/User.js';
@@ -12,7 +12,7 @@ import connectDB from './config/db.js';
 import mongoose from 'mongoose';
 import Algorithms from './models/Algorithm.js';
 import crypto from 'crypto'
-import {ObjectId} from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
@@ -20,8 +20,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
-    credentials: true
+  origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
+  credentials: true
 }));
 
 connectDB();
@@ -50,19 +50,19 @@ connectDB();
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.send("This is the backend server of Algoverse");
+  res.send("This is the backend server of Algoverse");
 });
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'healthy' });
+  res.json({ status: 'healthy' });
 });
 
-async function invokeLLM(promptTemplate, input,llm) {
+async function invokeLLM(promptTemplate, input, llm) {
 
-    const formattedPrompt = await promptTemplate.format(input);
+  const formattedPrompt = await promptTemplate.format(input);
 
-    const response = await llm.invoke(formattedPrompt);
-    return response.content;
+  const response = await llm.invoke(formattedPrompt);
+  return response.content;
 }
 
 app.post('/make', async (req, res) => {
@@ -80,23 +80,23 @@ app.post('/make', async (req, res) => {
     };
     const val = await invokeLLM(CheckerPrompt, check_input, llm);
     console.log(val)
-    if(val.toUpperCase()!='NEW'){
+    if (val.toUpperCase() != 'NEW') {
       const id = val.match(/FOUND:(.+)/)?.[1]?.trim();
       const update_algo_to_user = await User.findOneAndUpdate(
-        { clerkId: userID },               
-        { $addToSet: { Algo_id: id } }, 
-        { new: true } 
-        );
-        
-    const metadata = await Algorithms.findById(id);
-        res.json({ success: true, id: id, metadata , user: update_algo_to_user });
+        { clerkId: userID },
+        { $addToSet: { Algo_id: id } },
+        { new: true }
+      );
+
+      const metadata = await Algorithms.findById(id);
+      res.json({ success: true, id: id, metadata, user: update_algo_to_user });
     }
 
     if (!Algo_name) return res.status(400).send("Algo_name is required");
     if (!userID) return res.status(400).send("userID is required");
 
     const input = { algorithm: Algo_name };
-    const code = await invokeLLM(Prompt, input,llm);
+    const code = await invokeLLM(Prompt, input, llm);
 
     const metadata = helpers.extractMetadata(code);
     // await helpers.addMetadataToJson(metadata);
@@ -117,10 +117,10 @@ app.post('/make', async (req, res) => {
 
     // Append to User
     const update_algo_to_user = await User.findOneAndUpdate(
-        { clerkId: userID },               
-        { $addToSet: { Algo_id: doc._id } }, 
-        { new: true } 
-        );
+      { clerkId: userID },
+      { $addToSet: { Algo_id: doc._id } },
+      { new: true }
+    );
 
     res.json({ success: true, id: doc._id, metadata, user: update_algo_to_user });
   } catch (err) {
@@ -189,31 +189,37 @@ app.post("/get_algorithms", async (req, res) => {
     }
 
     // Find the user in the database
-    const userdet = await User.findOne({ clerkId: id });
+    let userAlgos = [];
+    if(id!=="guest"){
+      const userdet = await User.findOne({ clerkId: id });
+  
+      if (!userdet) {
+        return res.status(404).json({
+          success: false,
+          error: "User not found",
+        });
+      }
+      // Get algorithms linked to this user
+      const algoIds = userdet.Algo_id || [];
+      if (algoIds.length === 0) {
+        return res.json({
+          success: true,
+          data: [],
+          message: "No algorithms found for this user",
+        });
+      }
 
-    if (!userdet) {
-      return res.status(404).json({
-        success: false,
-        error: "User not found",
-      });
+      // Fetch algorithm metadata (exclude code)
+      userAlgos = await Algorithms.find(
+        { _id: { $in: algoIds } },
+        { code: 0 }
+      );
     }
 
-    // Get algorithms linked to this user
-    const algoIds = userdet.Algo_id || [];
-    if (algoIds.length === 0) {
-      return res.json({
-        success: true,
-        data: [],
-        message: "No algorithms found for this user",
-      });
-    }
-
-    // Fetch algorithm metadata (exclude code)
-    const algos = await Algorithms.find(
-      { _id: { $in: algoIds } },
-      { code: 0 }
-    );
-
+    // get verified algos
+    const verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
+    const algos = [...userAlgos, ...verifiedAlgos];
+    
     res.json({
       success: true,
       data: algos,
@@ -229,19 +235,7 @@ app.post("/get_algorithms", async (req, res) => {
 });
 
 
-app.post("/get-admin-algos", async (req, res) => {
-  try {
-    const algos = await Algorithms.find({isVerified: true}, { code: 0 });
-    res.status(200).json({ success: true, algos });
-  } catch (err) {
-    console.error("Error in /get-admin-algos:", err);
-    res.status(500).json({ error: "Server error", details: err.message });
-  }
-});
-
-
-
-// ✅ POST route for J-Doodle code execution
+// POST route for J-Doodle code execution
 app.post('/api/execute', async (req, res) => {
   // 1. Get credentials from .env
   const JDOODLE_CLIENT_ID = process.env.JDOODLE_CLIENT_ID;
@@ -296,7 +290,7 @@ app.post('/api/execute', async (req, res) => {
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 // export const handler = serverless(app);
 export default app;

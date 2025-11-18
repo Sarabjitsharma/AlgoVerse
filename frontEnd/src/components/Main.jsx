@@ -114,7 +114,7 @@ const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
 
 export default function Main() {
   const { isLoaded, isSignedIn, user } = useUser();
-  const user_id = user?.id || "not logged in";
+  const user_id = user?.id || "guest";
   const [Articles, setArticles] = useState([]);
   const isAdmin = user?.publicMetadata?.isAdmin || false;
 
@@ -122,6 +122,7 @@ export default function Main() {
   const getArticles = async (userID) => {
     try {
       const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
+      // const response = await fetch("http://127.0.0.1:8000/get_algorithms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userID }),
@@ -131,30 +132,23 @@ export default function Main() {
       return await response.json();
     } catch (err) {
       console.error("Error fetching algorithms:", err);
-      // Return the same shape on error to prevent issues
       return { success: false, data: [] };
     }
   };
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user_id !== "not logged in") {
-      (async () => {
-        const data = await getArticles(user_id);
-        console.log("Fetched user algorithms:", data);
-
-        if (data && data.success && Array.isArray(data.data)) {
-          setArticles(data.data);
-        } else {
-          setArticles([]);
-        }
-      })();
-    } else if (isLoaded && !isSignedIn) {
-      setArticles([]);
-    }
+    if (!isLoaded) return;
+    (async () => {
+      const data = await getArticles(user_id);
+      if (data && data.success && Array.isArray(data.data)) {
+        setArticles(data.data);
+      } else {
+        setArticles([]);
+      }
+    })();
   }, [isLoaded, isSignedIn, user_id]);
-  // --- End of moved logic ---
 
-  // --- Calculate stats based on the 'Articles' state ---
+  // Calculate stats based on the 'Articles' state
   const totalTopics = Articles.length;
   const beginnerTopics = Articles.filter(a => a.difficulty === 'Beginner').length;
   const intermediateTopics = Articles.filter(a => a.difficulty === 'Intermediate').length;
@@ -163,60 +157,59 @@ export default function Main() {
   return (
     <main>
       <AnimatedContent >
-      <section className="hero">
-        <div className="container">
-          <h1 className="flex justify-center">
-            <BlurText
-              text="DSA Learning Hub"
-              delay={150}
-              animateBy="words"
-              direction="top"
-              onAnimationComplete={() => console.log("Animation Complete!")}
-              className="text-6xl"
-            />
-          </h1>
-          <p className="hero-subtitle">Master Data Structures & Algorithms</p>
+        <section className="hero">
+          <div className="container">
+            <h1 className="flex justify-center">
+              <BlurText
+                text="DSA Learning Hub"
+                delay={150}
+                animateBy="words"
+                direction="top"
+                className="text-6xl"
+              />
+            </h1>
+            <p className="hero-subtitle">Master Data Structures & Algorithms</p>
 
-          <div className="hero-description">
-            <p>Learn essential algorithms and data structures through interactive examples, practice
-              problems, and comprehensive tutorials.</p>
-            <p>From basic sorting algorithms to advanced graph theory - everything you need for coding
-              interviews and competitive programming.</p>
+            <div className="hero-description">
+              <p>Learn essential algorithms and data structures through interactive examples, practice
+                problems, and comprehensive tutorials.</p>
+              <p>From basic sorting algorithms to advanced graph theory - everything you need for coding
+                interviews and competitive programming.</p>
 
-            {/* --- UPDATED STATS --- */}
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-number">{totalTopics}</span>
-                <span className="stat-label">Topics</span>
+              {/* --- UPDATED STATS --- */}
+              <div className="hero-stats">
+                <div className="stat">
+                  <span className="stat-number">{totalTopics}</span>
+                  <span className="stat-label">Topics</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-number">
+                    {beginnerTopics}
+                  </span>
+                  <span className="stat-label">Beginner</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-number">
+                    {intermediateTopics}
+                  </span>
+                  <span className="stat-label">Intermediate</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-number">
+                    {advancedTopics}
+                  </span>
+                  <span className="stat-label">Advanced</span>
+                </div>
               </div>
-              <div className="stat">
-                <span className="stat-number">
-                  {beginnerTopics}
-                </span>
-                <span className="stat-label">Beginner</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">
-                  {intermediateTopics}
-                </span>
-                <span className="stat-label">Intermediate</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">
-                  {advancedTopics}
-                </span>
-                <span className="stat-label">Advanced</span>
-              </div>
+
+              <a href="#articles" className="cta-button">
+                <div className="text-gray-100">
+                  Start Learning →
+                </div>
+              </a>
             </div>
-
-            <a href="#articles" className="cta-button">
-              <div className="text-gray-100">
-                Start Learning →
-              </div>
-            </a>
           </div>
-        </div>
-      </section>
+        </section>
       </AnimatedContent>
       <section className="articles-section" id="articles">
         {/* Pass the state and props down to ArticleGrid */}
