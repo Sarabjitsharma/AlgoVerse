@@ -69,36 +69,52 @@ function getJdoodleLanguage(lang) {
 // Helper function to execute JS locally
 const executeJsLocally = (code) => {
   return new Promise((resolve, reject) => {
-    // Create a temporary file in the system's temp directory
+    // Use a consistent temp directory and file name
     const fileName = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.js`;
     const filePath = path.join(os.tmpdir(), fileName);
 
     try {
+      // Write code to the file
       fs.writeFileSync(filePath, code);
 
-      // Run the file with Node.js with a 5-second timeout
-      exec(`node "${filePath}"`, { timeout: 5000 }, (error, stdout, stderr) => {
-        // Clean up the temp file
+      // Execute the file with Node.js with a 5-second timeout
+      exec(`node "${filePath}"`, { timeout: 5000, killSignal: 'SIGTERM' }, (error, stdout, stderr) => {
+        // --- Start Cleanup and Error Handling ---
         try {
+          // Always try to clean up the temp file synchronously
           if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         } catch (cleanupErr) {
           console.error("Failed to delete temp file:", cleanupErr);
         }
 
+        // If there's an execution error (non-zero exit code) or timeout
         if (error) {
-          // Check for timeout
+          let errorMessage = "";
           if (error.killed) {
-            resolve({ output: "Error: Time Limit Exceeded (5s)", statusCode: 408 });
+            errorMessage = "Error: Time Limit Exceeded (5s)";
+          } else if (stderr) {
+            // Capture standard error for compiler/runtime errors
+            errorMessage = stderr;
           } else {
-            resolve({ output: stderr || error.message, statusCode: 400 });
+            // Capture generic Node/OS error messages
+            errorMessage = error.message;
           }
+
+          // Resolve with an error response that the frontend expects
+          resolve({ output: errorMessage.trim(), statusCode: 400 });
+
         } else {
+          // Successful execution
           resolve({ output: stdout, statusCode: 200, memory: "local", cpuTime: "local" });
         }
       });
     } catch (err) {
-      reject(err);
+      // Catch errors related to file writing/system failure
+      console.error('Local execution setup failed:', err);
+      // On setup failure, REJECT the promise so the Express route catches it and exposes the message
+      reject(new Error(`Local execution setup failed: ${err.message}`));
     }
   });
 };
+
 export default{ extractMetadata, addMetadataToJson, cleanOutput, getJdoodleLanguage, executeJsLocally};
