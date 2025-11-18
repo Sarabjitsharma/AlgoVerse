@@ -117,15 +117,15 @@ export default function Main() {
   const user_id = user?.id || "guest";
   const [Articles, setArticles] = useState([]);
   const isAdmin = user?.publicMetadata?.isAdmin || false;
-
+  
   // Backend API call
-  const getArticles = async (userID) => {
+  const getArticles = async (userID, isAdmin) => {
     try {
       const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
       // const response = await fetch("http://127.0.0.1:8000/get_algorithms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userID }),
+        body: JSON.stringify({ id: userID, admin: isAdmin }),
       });
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -139,7 +139,7 @@ export default function Main() {
   useEffect(() => {
     if (!isLoaded) return;
     (async () => {
-      const data = await getArticles(user_id);
+      const data = await getArticles(user_id, isAdmin);
       if (data && data.success && Array.isArray(data.data)) {
         setArticles(data.data);
       } else {

@@ -178,8 +178,8 @@ app.get("/get-algo/:id", async (req, res) => {
 app.post("/get_algorithms", async (req, res) => {
   try {
     // Frontend sends { id: userID }
-    const { id } = req.body;
-
+    const { id, admin } = req.body;
+    
     // Check if ID is present
     if (!id) {
       return res.status(400).json({
@@ -187,10 +187,13 @@ app.post("/get_algorithms", async (req, res) => {
         error: "Missing user ID in request body",
       });
     }
-
+    
     // Find the user in the database
     let userAlgos = [];
-    if(id!=="guest"){
+    if(admin){
+      userAlgos = await Algorithms.find({}, { code: 0 });
+    }
+    else if(id!=="guest"){
       const userdet = await User.findOne({ clerkId: id });
   
       if (!userdet) {
@@ -217,8 +220,12 @@ app.post("/get_algorithms", async (req, res) => {
     }
 
     // get verified algos
-    const verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
-    const algos = [...userAlgos, ...verifiedAlgos];
+    let verifiedAlgos = [];
+    let algos = userAlgos;
+    if(!admin){
+      verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
+      algos = [...userAlgos, ...verifiedAlgos];
+    }
     
     res.json({
       success: true,
