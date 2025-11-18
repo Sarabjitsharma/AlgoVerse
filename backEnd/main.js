@@ -23,8 +23,6 @@ app.use(cors({
   origin: ["*", "http://localhost:5173", "https://algo-verse-jade.vercel.app"],
   credentials: true
 }));
-import { exec } from 'child_process'; // Import exec to run commands
-import os from 'os'; // Import os to find the temp directory
 connectDB();
 
 

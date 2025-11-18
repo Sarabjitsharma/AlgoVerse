@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process'; // Import exec to run commands
+import os from 'os'; // Import os to find the temp directory
 
 function extractMetadata(rawOutput) {
     const regex = /<metadata>\s*(\{.*?\})\s*<\/metadata>/s;
