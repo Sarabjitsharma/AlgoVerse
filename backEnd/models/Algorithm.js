@@ -8,6 +8,8 @@ const algorithmSchema = new mongoose.Schema({
   difficulty : { type: String,required :true }, 
   slug : {type:String,required:true},
   code : {type:String,required:true},
+  isVerified: { type: Boolean, default:false},
+  practiceProblems : {type:[String]},
   createdAt: { type: Date, default: Date.now }
 });
 
