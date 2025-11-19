@@ -798,7 +798,7 @@ const Prompt = new PromptTemplate({
         </golden-example>
 
         ## Hard Requirements
-        - **Output exactly one <code-file name="{algorithm}.jsx">...</code-file> block** containing the full React component.
+        - **Output exactly one <code-file>...</code-file> block** containing the full React component.
         - Must run instantly in Create React App with Tailwind CSS and lucide-react.
         - Absolutely no errors or placeholders — fully functional code only.
         - **IMPORTANT: Do not use 'export default'. End the file with 'render(<ComponentName />);' to render the component immediately.**
@@ -817,9 +817,7 @@ const Prompt = new PromptTemplate({
         ## Output Structure
         1. Output ONLY raw JSX code. No <code-file> wrapper. No XML tags.
             <code-file> — JSX code here — </code-file>
-        2. <explanation> — 2-3 sentences explaining what the page does and how to run it. </explanation>
-        3. <dependencies> — List: "react", "react-dom", "lucide-react", "tailwindcss". </dependencies>
-        4. <metadata> — JSON object with these keys and example values:
+        2. <metadata> — JSON object with these keys and example values:
         {{
             "title": "algorithm_title",
             "slug": "algorithm_slug",

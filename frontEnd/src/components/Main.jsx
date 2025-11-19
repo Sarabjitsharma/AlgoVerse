@@ -126,9 +126,10 @@ const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
           >
             Previous
           </button>
-          <span className="pagination-info">
+          <span className="pagination-info !text-white">
             Page {currentPage} of {Math.ceil(Articles.length / articlesPerPage)}
           </span>
+
           <button
             className="pagination-btn"
             onClick={() => setCurrentPage(currentPage + 1)}
