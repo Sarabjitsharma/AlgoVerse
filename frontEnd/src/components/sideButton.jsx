@@ -3,6 +3,7 @@ import { MessageCircle, X, Send } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 
+const url = import.meta.env.VITE_BACKEND_URL;
 export default function SideChatButton() {
   const { user } = useUser();
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function SideChatButton() {
     // console.log(user_id);
     const algo = { "Algo_name": inp, "userID": user_id };
     // console.log(algo);
-    const response = await fetch('https://algo-verse-7sci.vercel.app/make', {
+    const response = await fetch(`${url}/make`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'

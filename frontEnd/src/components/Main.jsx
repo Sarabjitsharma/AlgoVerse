@@ -4,16 +4,18 @@ import { useState, useEffect } from 'react';
 import BlurText from './BlurText';
 import AnimatedContent from './AnimatedContent.jsx';
 
+const url = import.meta.env.VITE_BACKEND_URL;
 const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
 
   const [category, setCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 6;
+  // console.log(url);
 
   const handleVerify = async (algoId, isChecked) => {
     try {
       // const response = await fetch("https://algo-verse-7sci.vercel.app/verify-algo", {
-      const response = await fetch("http://127.0.0.1:8000/verify-algo", {
+      const response = await fetch(`${url}/verify-algo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -149,7 +151,7 @@ export default function Main() {
   const getArticles = async (userID, isAdmin) => {
     try {
       // const response = await fetch("https://algo-verse-7sci.vercel.app/get_algorithms", {
-        const response = await fetch("http://127.0.0.1:8000/get_algorithms", {
+        const response = await fetch(`${url}/get_algorithms`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userID, admin: isAdmin }),
