@@ -3,6 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from 'react';
 import BlurText from './BlurText';
 import AnimatedContent from './AnimatedContent.jsx';
+import FloatingLines from './FloatingLines';
 
 const url = import.meta.env.VITE_BACKEND_URL;
 const ArticleGrid = ({ Articles, isSignedIn, isAdmin }) => {
@@ -175,7 +176,7 @@ export default function Main() {
         setArticles([]);
       }
     })();
-  }, [isLoaded, isSignedIn, user_id]);
+  }, [isLoaded, isSignedIn, user_id, isAdmin]);
 
   // Calculate stats based on the 'Articles' state
   const totalTopics = Articles.length;
@@ -186,7 +187,21 @@ export default function Main() {
   return (
     <main>
       <AnimatedContent >
-        <section className="hero">
+        <div style={{ width: "100%", height: "600px", position: "relative" }}>
+
+          <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+            <FloatingLines
+              enabledWaves={['top', 'bottom']}
+              lineCount={[10, 15, 20]}
+              lineDistance={[8, 6, 4]}
+              bendRadius={5.0}
+              bendStrength={-0.5}
+              interactive={true}
+              parallax={true}
+            />
+          </div>
+          <section className="hero" style={{ position: "relative", zIndex: 10 }}>
+
           <div className="container">
             <h1 className="flex justify-center">
               <BlurText
@@ -199,7 +214,7 @@ export default function Main() {
             </h1>
             <p className="hero-subtitle">Master Data Structures & Algorithms</p>
 
-            <div className="hero-description">
+            <div className="hero-description text-black dark:text-gray-300">
               <p>Learn essential algorithms and data structures through interactive examples, practice
                 problems, and comprehensive tutorials.</p>
               <p>From basic sorting algorithms to advanced graph theory - everything you need for coding
@@ -239,6 +254,8 @@ export default function Main() {
             </div>
           </div>
         </section>
+        </div>
+
       </AnimatedContent>
       <section className="articles-section" id="articles">
         {/* Pass the state and props down to ArticleGrid */}
