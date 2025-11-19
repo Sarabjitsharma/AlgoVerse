@@ -46,13 +46,22 @@ async function addMetadataToJson(metadata, jsonPath = '../frontEnd/src/data/algo
 
 function cleanOutput(answer) {
     let content = answer.toString().trim();
-    content = content.replace(/<explanation>.*?<\/explanation>/gis, '');
-    content = content.replace(/<dependencies(-file)?>.*?<\/dependencies(-file)?>/gis, '');
 
-    const codeMatch = content.match(/<code-file[^>]*>(.*?)<\/code-file>/s);
-    const extracted = codeMatch ? codeMatch[1].trim() : "";
-    return extracted.replace(/\n{3,}/g, '\n\n');
+    // Remove wrappers completely
+    content = content.replace(/<code-file[^>]*>/gi, '');
+    content = content.replace(/<\/code-file>/gi, '');
+
+    // Remove explanation, metadata, dependencies
+    content = content.replace(/<explanation>[\s\S]*?<\/explanation>/gi, '');
+    content = content.replace(/<dependencies[^>]*>[\s\S]*?<\/dependencies>/gi, '');
+    content = content.replace(/<metadata>[\s\S]*?<\/metadata>/gi, '');
+
+    // Remove leading spaces/new lines/BOM
+    content = content.replace(/^\s+/, '');
+
+    return content;
 }
+
 
 // Helper function to map your language names to J-Doodle's
 function getJdoodleLanguage(lang) {
