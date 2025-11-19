@@ -219,9 +219,12 @@ app.post("/get_algorithms", async (req, res) => {
     const verifiedAlgos = await Algorithms.find({ isVerified: true }, { code: 0 });
     const algos = [...userAlgos, ...verifiedAlgos];
 
+    const uniqueAlgos = [
+      ...new Map(algos.map(algo => [algo._id.toString(), algo])).values()
+    ];
     return res.json({
       success: true,
-      data: algos,
+      data: uniqueAlgos,
     });
 
   } catch (err) {

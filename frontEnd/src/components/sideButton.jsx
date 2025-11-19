@@ -137,9 +137,17 @@ export default function SideChatButton() {
       )}
 
       {/* Chat Button */}
+      {!isOpen && (
+        <div className="fixed bottom-5 right-22 w-80 p-3 rounded-lg shadow-lg text-center text-sm
+          bg-gray-100 text-black
+          dark:bg-gray-800 dark:text-white
+          transition-all duration-300">
+          Need help? Ask me to create an algorithm page for you!
+        </div>
+      )}
       <button
         onClick={toggleChat}
-        className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${isOpen
+        className={`w-14 h-14 rounded-full shadow-lg cursor-pointer flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${isOpen
           ? 'bg-gray-600 hover:bg-gray-700'
           : 'bg-blue-600 hover:bg-blue-700'
           }`}
